@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Physical 3x3 Rubik's Cube - Three.js Single File</title>
+
+  <!--
+    依赖管理：全部通过 importmap 引入 ES Modules。
+    贴图、材质纹理全部在运行时用 Canvas API 生成；没有任何外部图片/贴图资源。
+  -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.164.1/examples/jsm/",
+      "@tweenjs/tween.js": "https://unpkg.com/@tweenjs/tween.js@23.1.3/dist/tween.esm.js"
+    }
+  }
+  </script>
+
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 35%, #263246 0%, #111723 48%, #080b10 100%);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #f6f7fb;
+      user-select: none;
+    }
+
+    #app {
+      position: fixed;
+      inset: 0;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    canvas.dragging {
+      cursor: grabbing;
+    }
+
+    .hud {
+      position: fixed;
+      left: 18px;
+      top: 18px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    .panel {
+      width: min(420px, calc(100vw - 36px));
+      box-sizing: border-box;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      background: rgba(9, 12, 20, 0.62);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(16px);
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: 760;
+      letter-spacing: 0.02em;
+      margin-bottom: 8px;
+    }
+
+    .hint {
+      font-size: 13px;
+      line-height: 1.55;
+      color: rgba(246, 247, 251, 0.78);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      pointer-events: auto;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 16px;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      background: linear-gradient(180deg, rgba(95, 131, 255, 0.98), rgba(54, 86, 214, 0.98));
+      box-shadow: 0 10px 26px rgba(57, 91, 228, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      cursor: pointer;
+      transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
+    }
+
+    button.secondary {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08));
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(1.06); }
+    button:active { transform: translateY(1px) scale(0.98); }
+    button:disabled { opacity: 0.48; cursor: not-allowed; transform: none; }
+
+    .status {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 10;
+      padding: 10px 14px;
+      border-radius: 999px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 12px;
+      background: rgba(9, 12, 20, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <div class="hud">
+    <div class="panel">
+      <div class="title">3×3 Physical Rubik's Cube</div>
+      <div class="hint">
+        左键按住任意贴纸/小方块并拖拽：旋转对应层。<br />
+        右键拖拽：旋转视角。松开左键后自动磁吸到最近的 90°。
+      </div>
+    </div>
+    <div class="buttons">
+      <button id="scrambleBtn">Scramble</button>
+      <button id="resetBtn" class="secondary">Reset</button>
+    </div>
+  </div>
+
+  <div id="status" class="status">Ready</div>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import * as TWEEN from '@tweenjs/tween.js';
+
+    // ============================================================
+    // 基础常量：用 STEP > CUBIE_SIZE 形成真实魔方的小方块物理间隙。
+    // ============================================================
+    const CUBIE_SIZE = 0.96;
+    const SPACING = 0.095;
+    const STEP = CUBIE_SIZE + SPACING;
+    const STICKER_SIZE = CUBIE_SIZE * 0.72;
+    const STICKER_OFFSET = CUBIE_SIZE / 2 + 0.012;
+    const EPSILON = STEP * 0.28;
+    const HALF_PI = Math.PI / 2;
+    const PIXEL_TO_RAD = 0.0125;
+    const DRAG_THRESHOLD = 5;
+
+    const AXES = {
+      x: new THREE.Vector3(1, 0, 0),
+      y: new THREE.Vector3(0, 1, 0),
+      z: new THREE.Vector3(0, 0, 1)
+    };
+
+    const FACE_COLORS = {
+      px: '#db2424', // Right  - Red
+      nx: '#ff861f', // Left   - Orange
+      py: '#ffffff', // Up     - White
+      ny: '#ffd21a', // Down   - Yellow
+      pz: '#1f63ff', // Front  - Blue
+      nz: '#27b45d'  // Back   - Green
+    };
+
+    // ============================================================
+    // Three.js 场景、光影、相机、控制器。
+    // ============================================================
+    const app = document.getElementById('app');
+    const statusEl = document.getElementById('status');
+    const scrambleBtn = document.getElementById('scrambleBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0d14);
+
+    const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(5.2, 4.2, 6.4);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    app.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.rotateSpeed = 0.72;
+    controls.enablePan = false;
+    controls.minDistance = 4.2;
+    controls.maxDistance = 12;
+    // 操作分离：左键留给层旋转，右键交给 OrbitControls 旋转视角。
+    controls.mouseButtons = {
+      LEFT: null,
+      MIDDLE: THREE.MOUSE.DOLLY,
+      RIGHT: THREE.MOUSE.ROTATE
+    };
+
+    const ambient = new THREE.AmbientLight(0xffffff, 0.58);
+    scene.add(ambient);
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.15);
+    keyLight.position.set(5, 8, 6);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(2048, 2048);
+    keyLight.shadow.camera.near = 0.1;
+    keyLight.shadow.camera.far = 25;
+    keyLight.shadow.camera.left = -7;
+    keyLight.shadow.camera.right = 7;
+    keyLight.shadow.camera.top = 7;
+    keyLight.shadow.camera.bottom = -7;
+    keyLight.shadow.bias = -0.0006;
+    scene.add(keyLight);
+
+    const fillLight = new THREE.DirectionalLight(0x8fb7ff, 0.9);
+    fillLight.position.set(-6, 3, -5);
+    scene.add(fillLight);
+
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(18, 18),
+      new THREE.ShadowMaterial({ color: 0x000000, opacity: 0.34 })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -2.35;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    // ============================================================
+    // Canvas 程序化贴纸纹理：圆角矩形、高光、内阴影，无任何图片依赖。
+    // ============================================================
+    function roundedRect(ctx, x, y, w, h, r) {
+      const rr = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + rr, y);
+      ctx.arcTo(x + w, y, x + w, y + h, rr);
+      ctx.arcTo(x + w, y + h, x, y + h, rr);
+      ctx.arcTo(x, y + h, x, y, rr);
+      ctx.arcTo(x, y, x + w, y, rr);
+      ctx.closePath();
+    }
+
+    function shadeColor(hex, t) {
+      const n = parseInt(hex.slice(1), 16);
+      let r = (n >> 16) & 255;
+      let g = (n >> 8) & 255;
+      let b = n & 255;
+      if (t >= 0) {
+        r = Math.round(r + (255 - r) * t);
+        g = Math.round(g + (255 - g) * t);
+        b = Math.round(b + (255 - b) * t);
+      } else {
+        r = Math.round(r * (1 + t));
+        g = Math.round(g * (1 + t));
+        b = Math.round(b * (1 + t));
+      }
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    const textureCache = new Map();
+    function makeStickerTexture(hex) {
+      if (textureCache.has(hex)) return textureCache.get(hex);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 256;
+      canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, 256, 256);
+
+      // 黑色软阴影像真实塑料边框里嵌入的贴纸。
+      ctx.save();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.55)';
+      ctx.shadowBlur = 16;
+      ctx.shadowOffsetY = 7;
+      roundedRect(ctx, 22, 20, 212, 212, 34);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.42)';
+      ctx.fill();
+      ctx.restore();
+
+      // 贴纸主体渐变，模拟轻微塑料反光。
+      const grad = ctx.createLinearGradient(34, 28, 224, 232);
+      grad.addColorStop(0.00, shadeColor(hex, 0.36));
+      grad.addColorStop(0.45, hex);
+      grad.addColorStop(1.00, shadeColor(hex, -0.20));
+      roundedRect(ctx, 30, 28, 196, 196, 30);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // 高光层。
+      const shine = ctx.createRadialGradient(72, 56, 6, 72, 56, 138);
+      shine.addColorStop(0, 'rgba(255, 255, 255, 0.55)');
+      shine.addColorStop(0.38, 'rgba(255, 255, 255, 0.13)');
+      shine.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      roundedRect(ctx, 30, 28, 196, 196, 30);
+      ctx.fillStyle = shine;
+      ctx.fill();
+
+      // 细边框提升真实感。
+      roundedRect(ctx, 34, 32, 188, 188, 26);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+      ctx.stroke();
+      roundedRect(ctx, 31, 29, 194, 194, 30);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.18)';
+      ctx.stroke();
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
+      texture.needsUpdate = true;
+      textureCache.set(hex, texture);
+      return texture;
+    }
+
+    const bodyGeometry = new THREE.BoxGeometry(CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
+    const stickerGeometry = new THREE.PlaneGeometry(STICKER_SIZE, STICKER_SIZE);
+    const bodyMaterial = new THREE.MeshStandardMaterial({
+      color: 0x101217,
+      roughness: 0.45,
+      metalness: 0.0
+    });
+
+    const stickerMaterials = new Map();
+    function getStickerMaterial(faceKey) {
+      const hex = FACE_COLORS[faceKey];
+      if (stickerMaterials.has(hex)) return stickerMaterials.get(hex);
+      const mat = new THREE.MeshStandardMaterial({
+        map: makeStickerTexture(hex),
+        roughness: 0.33,
+        metalness: 0.0,
+        transparent: true,
+        side: THREE.DoubleSide
+      });
+      stickerMaterials.set(hex, mat);
+      return mat;
+    }
+
+    let cubies = [];
+    let activePivot = null;
+    let activeLayer = [];
+    let drag = null;
+    let busy = false;
+
+    function addSticker(group, faceKey) {
+      const sticker = new THREE.Mesh(stickerGeometry, getStickerMaterial(faceKey));
+      sticker.castShadow = false;
+      sticker.receiveShadow = true;
+      sticker.userData.cubie = group;
+      sticker.renderOrder = 2;
+
+      switch (faceKey) {
+        case 'px':
+          sticker.position.x = STICKER_OFFSET;
+          sticker.rotation.y = Math.PI / 2;
+          break;
+        case 'nx':
+          sticker.position.x = -STICKER_OFFSET;
+          sticker.rotation.y = -Math.PI / 2;
+          break;
+        case 'py':
+          sticker.position.y = STICKER_OFFSET;
+          sticker.rotation.x = -Math.PI / 2;
+          break;
+        case 'ny':
+          sticker.position.y = -STICKER_OFFSET;
+          sticker.rotation.x = Math.PI / 2;
+          break;
+        case 'pz':
+          sticker.position.z = STICKER_OFFSET;
+          break;
+        case 'nz':
+          sticker.position.z = -STICKER_OFFSET;
+          sticker.rotation.y = Math.PI;
+          break;
+      }
+      group.add(sticker);
+    }
+
+    function createCubie(ix, iy, iz) {
+      const group = new THREE.Group();
+      group.name = `cubie_${ix}_${iy}_${iz}`;
+      group.userData.isCubie = true;
+      group.position.set(ix * STEP, iy * STEP, iz * STEP);
+
+      const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+      body.castShadow = true;
+      body.receiveShadow = true;
+      body.userData.cubie = group;
+      group.add(body);
+
+      if (ix === 1) addSticker(group, 'px');
+      if (ix === -1) addSticker(group, 'nx');
+      if (iy === 1) addSticker(group, 'py');
+      if (iy === -1) addSticker(group, 'ny');
+      if (iz === 1) addSticker(group, 'pz');
+      if (iz === -1) addSticker(group, 'nz');
+
+      scene.add(group);
+      cubies.push(group);
+    }
+
+    function buildCube() {
+      cubies.forEach(c => scene.remove(c));
+      cubies = [];
+      for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+          for (let z = -1; z <= 1; z++) {
+            createCubie(x, y, z);
+          }
+        }
+      }
+      scene.updateMatrixWorld(true);
+    }
+
+    buildCube();
+
+    // ============================================================
+    // 坐标清洗：旋转结束后将位置归位到 STEP 网格，将姿态归位到 90° 倍数。
+    // 这一步用 Math.round 消除浮点误差，防止多次旋转后魔方“散架”。
+    // ============================================================
+    function snapToGrid(v) {
+      const snapped = Math.round(v / STEP) * STEP;
+      return Math.abs(snapped) < 1e-8 ? 0 : snapped;
+    }
+
+    function snapAngle(a) {
+      const twoPi = Math.PI * 2;
+      let snapped = Math.round(a / HALF_PI) * HALF_PI;
+      snapped = ((snapped + Math.PI) % twoPi + twoPi) % twoPi - Math.PI;
+      return Math.abs(snapped) < 1e-8 ? 0 : snapped;
+    }
+
+    function cleanupCubies() {
+      cubies.forEach(cubie => {
+        cubie.position.set(
+          snapToGrid(cubie.position.x),
+          snapToGrid(cubie.position.y),
+          snapToGrid(cubie.position.z)
+        );
+        cubie.rotation.set(
+          snapAngle(cubie.rotation.x),
+          snapAngle(cubie.rotation.y),
+          snapAngle(cubie.rotation.z)
+        );
+        cubie.updateMatrix();
+        cubie.updateMatrixWorld(true);
+      });
+    }
+
+    // ============================================================
+    // 动态层级筛选：不维护 3D 状态数组，不写死 cubie 索引。
+    // 每次旋转时遍历所有 cubie，根据世界坐标在某轴上的值是否接近 layerCoord 来决定是否属于该层。
+    // ============================================================
+    function getLayerCubies(axisName, layerCoord) {
+      const p = new THREE.Vector3();
+      return cubies.filter(cubie => {
+        cubie.getWorldPosition(p);
+        return Math.abs(p[axisName] - layerCoord) < EPSILON;
+      });
+    }
+
+    function setPivotAngle(axisName, angle) {
+      if (!activePivot) return;
+      activePivot.rotation.set(0, 0, 0);
+      activePivot.rotation[axisName] = angle;
+      activePivot.updateMatrixWorld(true);
+    }
+
+    // ============================================================
+    // Pivot 挂载逻辑：
+    // 1. 创建临时 Object3D 作为轴心 pivot。
+    // 2. pivot.attach(cubie) 把当前层小方块挂到轴心上。
+    // 3. 动画中只旋转 pivot。
+    // 4. 结束后 scene.attach(cubie) 放回场景。
+    // attach 会自动保持世界矩阵，避免手写四元数/矩阵乘法。
+    // ============================================================
+    function beginPivot(axisName, layerCoord) {
+      if (activePivot) return false;
+      activePivot = new THREE.Object3D();
+      activePivot.name = 'temporary_rotation_pivot';
+      scene.add(activePivot);
+      activePivot.updateMatrixWorld(true);
+
+      activeLayer = getLayerCubies(axisName, layerCoord);
+      activeLayer.forEach(cubie => activePivot.attach(cubie));
+      return activeLayer.length > 0;
+    }
+
+    function finishPivot() {
+      if (!activePivot) return;
+      activePivot.updateMatrixWorld(true);
+      activeLayer.forEach(cubie => scene.attach(cubie));
+      scene.remove(activePivot);
+      activePivot = null;
+      activeLayer = [];
+      cleanupCubies();
+      scene.updateMatrixWorld(true);
+    }
+
+    function animateLayerTurn(axisName, layerCoord, targetAngle, duration = 180) {
+      return new Promise(resolve => {
+        if (!beginPivot(axisName, layerCoord)) {
+          finishPivot();
+          resolve();
+          return;
+        }
+
+        const state = { angle: 0 };
+        new TWEEN.Tween(state)
+          .to({ angle: targetAngle }, duration)
+          .easing(TWEEN.Easing.Cubic.Out)
+          .onUpdate(() => setPivotAngle(axisName, state.angle))
+          .onComplete(() => {
+            setPivotAngle(axisName, targetAngle);
+            finishPivot();
+            resolve();
+          })
+          .start();
+      });
+    }
+
+    // ============================================================
+    // 手势投影算法核心：
+    // 点击面提供世界表面法线 normal。候选旋转轴是与 normal 垂直的两个世界轴。
+    // 对于某候选轴 axis，正向旋转时，被点击面上的瞬时运动方向是 axis × normal。
+    // 把这个 3D 方向投影到 2D 屏幕，再与鼠标滑动向量做点积：
+    // 点积绝对值最大者就是用户最可能想旋转的轴，点积正负就是旋转方向。
+    // 这样从正面、背面、顶面、斜视角拖拽都能保持视觉方向一致。
+    // ============================================================
+    const raycaster = new THREE.Raycaster();
+    const pointerNDC = new THREE.Vector2();
+
+    function getPointerScreen(event) {
+      return new THREE.Vector2(event.clientX, event.clientY);
+    }
+
+    function setPointerNDC(event) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      pointerNDC.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      pointerNDC.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+
+    function findCubieRoot(object) {
+      let cur = object;
+      while (cur && !cur.userData.isCubie) {
+        if (cur.userData.cubie) return cur.userData.cubie;
+        cur = cur.parent;
+      }
+      return cur && cur.userData.isCubie ? cur : null;
+    }
+
+    function raycastCubie(event) {
+      setPointerNDC(event);
+      raycaster.setFromCamera(pointerNDC, camera);
+      const hits = raycaster.intersectObjects(cubies, true);
+      if (!hits.length) return null;
+
+      const hit = hits[0];
+      const cubie = findCubieRoot(hit.object);
+      if (!cubie || !hit.face) return null;
+
+      const normalMatrix = new THREE.Matrix3().getNormalMatrix(hit.object.matrixWorld);
+      const normal = hit.face.normal.clone().applyMatrix3(normalMatrix).normalize();
+      const snappedNormal = snapNormalToWorldAxis(normal);
+
+      return {
+        cubie,
+        point: hit.point.clone(),
+        normal: snappedNormal
+      };
+    }
+
+    function snapNormalToWorldAxis(v) {
+      const ax = Math.abs(v.x);
+      const ay = Math.abs(v.y);
+      const az = Math.abs(v.z);
+      if (ax >= ay && ax >= az) return new THREE.Vector3(Math.sign(v.x) || 1, 0, 0);
+      if (ay >= ax && ay >= az) return new THREE.Vector3(0, Math.sign(v.y) || 1, 0);
+      return new THREE.Vector3(0, 0, Math.sign(v.z) || 1);
+    }
+
+    function projectWorldDirection(dir, basePoint) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      const p0 = basePoint.clone().project(camera);
+      const p1 = basePoint.clone().add(dir.clone().normalize()).project(camera);
+      const v = new THREE.Vector2(
+        (p1.x - p0.x) * rect.width * 0.5,
+        -(p1.y - p0.y) * rect.height * 0.5
+      );
+      if (v.lengthSq() < 1e-6) return null;
+      return v.normalize();
+    }
+
+    function selectGestureAxis(delta) {
+      const normal = drag.faceNormal;
+      const basePoint = drag.hitPoint;
+      const deltaDir = delta.clone().normalize();
+      let best = null;
+
+      for (const [axisName, axisVector] of Object.entries(AXES)) {
+        // 只允许选择与点击表面法线垂直的两个旋转轴。
+        if (Math.abs(axisVector.dot(normal)) > 0.5) continue;
+
+        // 正角速度时，点击表面的视觉运动方向。
+        const tangent3D = axisVector.clone().cross(normal).normalize();
+        const tangent2D = projectWorldDirection(tangent3D, basePoint);
+        if (!tangent2D) continue;
+
+        const signedScore = tangent2D.dot(deltaDir);
+        const score = Math.abs(signedScore);
+        if (!best || score > best.score) {
+          best = { axisName, axisVector, tangent2D, score, signedScore };
+        }
+      }
+      return best;
+    }
+
+    function startLayerDrag(axisChoice) {
+      const cubieCenter = new THREE.Vector3();
+      drag.cubie.getWorldPosition(cubieCenter);
+      const layerCoord = snapToGrid(cubieCenter[axisChoice.axisName]);
+
+      if (!beginPivot(axisChoice.axisName, layerCoord)) return false;
+      drag.axisName = axisChoice.axisName;
+      drag.layerCoord = layerCoord;
+      drag.screenDirection = axisChoice.tangent2D;
+      drag.currentAngle = 0;
+      return true;
+    }
+
+    function onPointerDown(event) {
+      if (event.button !== 0 || busy || activePivot) return;
+
+      const hit = raycastCubie(event);
+      if (!hit) return;
+
+      renderer.domElement.classList.add('dragging');
+      renderer.domElement.setPointerCapture(event.pointerId);
+      controls.enabled = false;
+
+      drag = {
+        pointerId: event.pointerId,
+        start: getPointerScreen(event),
+        cubie: hit.cubie,
+        hitPoint: hit.point,
+        faceNormal: hit.normal,
+        axisName: null,
+        layerCoord: 0,
+        screenDirection: null,
+        currentAngle: 0
+      };
+      statusEl.textContent = 'Drag a layer';
+    }
+
+    function onPointerMove(event) {
+      if (!drag || event.pointerId !== drag.pointerId) return;
+
+      const current = getPointerScreen(event);
+      const delta = current.sub(drag.start);
+
+      if (!drag.axisName) {
+        if (delta.length() < DRAG_THRESHOLD) return;
+        const axisChoice = selectGestureAxis(delta);
+        if (!axisChoice) return;
+        if (!startLayerDrag(axisChoice)) return;
+        statusEl.textContent = `Layer axis: ${drag.axisName.toUpperCase()}`;
+      }
+
+      const signedPixels = delta.dot(drag.screenDirection);
+      drag.currentAngle = signedPixels * PIXEL_TO_RAD;
+      setPivotAngle(drag.axisName, drag.currentAngle);
+    }
+
+    function endPointerDrag(event) {
+      if (!drag || event.pointerId !== drag.pointerId) return;
+
+      renderer.domElement.classList.remove('dragging');
+      renderer.domElement.releasePointerCapture(event.pointerId);
+
+      if (!drag.axisName) {
+        drag = null;
+        controls.enabled = true;
+        statusEl.textContent = 'Ready';
+        return;
+      }
+
+      busy = true;
+      const axisName = drag.axisName;
+      const currentAngle = drag.currentAngle;
+      let targetAngle = Math.round(currentAngle / HALF_PI) * HALF_PI;
+
+      // 轻微拖动但已经进入旋转态时，回弹到 0；大角度时吸附到最近 90°。
+      if (Math.abs(currentAngle) < 0.20) targetAngle = 0;
+
+      const state = { angle: currentAngle };
+      new TWEEN.Tween(state)
+        .to({ angle: targetAngle }, 210)
+        .easing(TWEEN.Easing.Back.Out)
+        .onUpdate(() => setPivotAngle(axisName, state.angle))
+        .onComplete(() => {
+          setPivotAngle(axisName, targetAngle);
+          finishPivot();
+          drag = null;
+          busy = false;
+          controls.enabled = true;
+          statusEl.textContent = 'Ready';
+        })
+        .start();
+    }
+
+    renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
+    renderer.domElement.addEventListener('pointerdown', onPointerDown);
+    renderer.domElement.addEventListener('pointermove', onPointerMove);
+    renderer.domElement.addEventListener('pointerup', endPointerDrag);
+    renderer.domElement.addEventListener('pointercancel', endPointerDrag);
+
+    scrambleBtn.addEventListener('click', async () => {
+      if (busy || drag || activePivot) return;
+      busy = true;
+      scrambleBtn.disabled = true;
+      resetBtn.disabled = true;
+      controls.enabled = false;
+      statusEl.textContent = 'Scrambling...';
+
+      const axisNames = ['x', 'y', 'z'];
+      const outerLayers = [-STEP, STEP];
+      const moves = 24;
+
+      for (let i = 0; i < moves; i++) {
+        const axisName = axisNames[Math.floor(Math.random() * axisNames.length)];
+        const layerCoord = outerLayers[Math.floor(Math.random() * outerLayers.length)];
+        const quarterTurns = Math.random() < 0.5 ? 1 : -1;
+        await animateLayerTurn(axisName, layerCoord, quarterTurns * HALF_PI, 115);
+      }
+
+      cleanupCubies();
+      busy = false;
+      scrambleBtn.disabled = false;
+      resetBtn.disabled = false;
+      controls.enabled = true;
+      statusEl.textContent = 'Ready';
+    });
+
+    resetBtn.addEventListener('click', () => {
+      if (busy) return;
+      TWEEN.removeAll();
+      if (activePivot) finishPivot();
+      drag = null;
+      buildCube();
+      cleanupCubies();
+      controls.enabled = true;
+      statusEl.textContent = 'Reset';
+      setTimeout(() => { statusEl.textContent = 'Ready'; }, 600);
+    });
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    });
+
+    function animate(time) {
+      requestAnimationFrame(animate);
+      TWEEN.update(time);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
