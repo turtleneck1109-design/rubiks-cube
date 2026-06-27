@@ -85,6 +85,7 @@
 
     .buttons {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
       pointer-events: auto;
     }
@@ -110,6 +111,27 @@
     button:hover { transform: translateY(-1px); filter: brightness(1.06); }
     button:active { transform: translateY(1px) scale(0.98); }
     button:disabled { opacity: 0.48; cursor: not-allowed; transform: none; }
+
+    .challenge-readout {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px 14px;
+      align-items: center;
+      font-size: 13px;
+      color: rgba(246, 247, 251, 0.78);
+    }
+
+    .challenge-readout strong {
+      font-size: 22px;
+      line-height: 1;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .challenge-readout span {
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
 
     .status {
       position: fixed;
@@ -139,8 +161,16 @@
       </div>
     </div>
     <div class="buttons">
+      <button id="challengeBtn">Challenge</button>
       <button id="scrambleBtn">Scramble</button>
       <button id="resetBtn" class="secondary">Reset</button>
+      <button id="soundBtn" class="secondary" aria-pressed="true">Sound On</button>
+    </div>
+    <div class="panel challenge-readout">
+      <span>Challenge time</span>
+      <strong id="timerText">00:00.00</strong>
+      <span>Best</span>
+      <span id="bestText">--:--.--</span>
     </div>
   </div>
 
@@ -184,8 +214,12 @@
     // ============================================================
     const app = document.getElementById('app');
     const statusEl = document.getElementById('status');
+    const challengeBtn = document.getElementById('challengeBtn');
     const scrambleBtn = document.getElementById('scrambleBtn');
     const resetBtn = document.getElementById('resetBtn');
+    const soundBtn = document.getElementById('soundBtn');
+    const timerText = document.getElementById('timerText');
+    const bestText = document.getElementById('bestText');
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0d14);
@@ -362,12 +396,96 @@
     let activeLayer = [];
     let drag = null;
     let busy = false;
+    let challengeActive = false;
+    let challengeStart = 0;
+    let lastChallengeTime = 0;
+    let bestChallengeTime = Number(localStorage.getItem('rubiksBestTime') || 0);
+    let soundEnabled = localStorage.getItem('rubiksSound') !== 'off';
+    let audioCtx = null;
+
+    function formatTime(ms) {
+      const totalCentiseconds = Math.max(0, Math.floor(ms / 10));
+      const centiseconds = totalCentiseconds % 100;
+      const totalSeconds = Math.floor(totalCentiseconds / 100);
+      const seconds = totalSeconds % 60;
+      const minutes = Math.floor(totalSeconds / 60);
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(centiseconds).padStart(2, '0')}`;
+    }
+
+    function updateTimerReadout() {
+      const elapsed = challengeActive ? performance.now() - challengeStart : lastChallengeTime;
+      timerText.textContent = formatTime(elapsed);
+      bestText.textContent = bestChallengeTime ? formatTime(bestChallengeTime) : '--:--.--';
+    }
+
+    function setButtonsDisabled(disabled) {
+      challengeBtn.disabled = disabled;
+      scrambleBtn.disabled = disabled;
+      resetBtn.disabled = disabled;
+      soundBtn.disabled = disabled;
+    }
+
+    function updateSoundButton() {
+      soundBtn.textContent = soundEnabled ? 'Sound On' : 'Sound Off';
+      soundBtn.setAttribute('aria-pressed', String(soundEnabled));
+    }
+
+    function ensureAudioContext() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playTurnSound(strength = 1) {
+      if (!soundEnabled) return;
+      const ctx = ensureAudioContext();
+      const now = ctx.currentTime;
+      const duration = 0.055;
+
+      const noiseBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * duration), ctx.sampleRate);
+      const samples = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < samples.length; i++) {
+        const fade = 1 - i / samples.length;
+        samples[i] = (Math.random() * 2 - 1) * fade;
+      }
+
+      const noise = ctx.createBufferSource();
+      const noiseGain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      noise.buffer = noiseBuffer;
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(1300 + Math.random() * 420, now);
+      filter.Q.setValueAtTime(7, now);
+      noiseGain.gain.setValueAtTime(0.0001, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.11 * strength, now + 0.004);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      const knock = ctx.createOscillator();
+      const knockGain = ctx.createGain();
+      knock.type = 'square';
+      knock.frequency.setValueAtTime(92 + Math.random() * 16, now);
+      knock.frequency.exponentialRampToValueAtTime(58 + Math.random() * 8, now + 0.045);
+      knockGain.gain.setValueAtTime(0.0001, now);
+      knockGain.gain.exponentialRampToValueAtTime(0.035 * strength, now + 0.003);
+      knockGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.052);
+
+      noise.connect(filter).connect(noiseGain).connect(ctx.destination);
+      knock.connect(knockGain).connect(ctx.destination);
+      noise.start(now);
+      noise.stop(now + duration);
+      knock.start(now);
+      knock.stop(now + 0.06);
+    }
+
+    updateSoundButton();
+    updateTimerReadout();
 
     function addSticker(group, faceKey) {
       const sticker = new THREE.Mesh(stickerGeometry, getStickerMaterial(faceKey));
       sticker.castShadow = false;
       sticker.receiveShadow = true;
       sticker.userData.cubie = group;
+      sticker.userData.faceKey = faceKey;
       sticker.renderOrder = 2;
 
       switch (faceKey) {
@@ -541,6 +659,51 @@
       });
     }
 
+    function faceKeyFromWorldPosition(position) {
+      const ax = Math.abs(position.x);
+      const ay = Math.abs(position.y);
+      const az = Math.abs(position.z);
+      if (ax >= ay && ax >= az) return position.x > 0 ? 'px' : 'nx';
+      if (ay >= ax && ay >= az) return position.y > 0 ? 'py' : 'ny';
+      return position.z > 0 ? 'pz' : 'nz';
+    }
+
+    function isCubeSolved() {
+      const worldPosition = new THREE.Vector3();
+      scene.updateMatrixWorld(true);
+      for (const cubie of cubies) {
+        for (const child of cubie.children) {
+          if (!child.userData.faceKey) continue;
+          child.getWorldPosition(worldPosition);
+          if (faceKeyFromWorldPosition(worldPosition) !== child.userData.faceKey) return false;
+        }
+      }
+      return true;
+    }
+
+    function startChallengeTimer() {
+      challengeActive = true;
+      challengeStart = performance.now();
+      lastChallengeTime = 0;
+      updateTimerReadout();
+    }
+
+    function stopChallengeTimer() {
+      if (!challengeActive) return;
+      lastChallengeTime = performance.now() - challengeStart;
+      challengeActive = false;
+      if (!bestChallengeTime || lastChallengeTime < bestChallengeTime) {
+        bestChallengeTime = lastChallengeTime;
+        localStorage.setItem('rubiksBestTime', String(bestChallengeTime));
+      }
+      updateTimerReadout();
+      statusEl.textContent = `Solved in ${formatTime(lastChallengeTime)}`;
+    }
+
+    function checkChallengeSolved() {
+      if (challengeActive && isCubeSolved()) stopChallengeTimer();
+    }
+
     // ============================================================
     // 手势投影算法核心：
     // 点击面提供世界表面法线 normal。候选旋转轴是与 normal 垂直的两个世界轴。
@@ -702,7 +865,7 @@
       if (!drag.axisName) {
         drag = null;
         controls.enabled = true;
-        statusEl.textContent = 'Ready';
+        statusEl.textContent = challengeActive ? 'Challenge running' : 'Ready';
         return;
       }
 
@@ -722,10 +885,14 @@
         .onComplete(() => {
           setPivotAngle(axisName, targetAngle);
           finishPivot();
+          if (Math.abs(targetAngle) > 0.01) {
+            playTurnSound();
+            checkChallengeSolved();
+          }
           drag = null;
           busy = false;
           controls.enabled = true;
-          statusEl.textContent = 'Ready';
+          statusEl.textContent = challengeActive ? 'Challenge running' : 'Ready';
         })
         .start();
     }
@@ -736,31 +903,54 @@
     renderer.domElement.addEventListener('pointerup', endPointerDrag);
     renderer.domElement.addEventListener('pointercancel', endPointerDrag);
 
-    scrambleBtn.addEventListener('click', async () => {
+    async function scrambleCube({ asChallenge = false } = {}) {
       if (busy || drag || activePivot) return;
       busy = true;
-      scrambleBtn.disabled = true;
-      resetBtn.disabled = true;
+      setButtonsDisabled(true);
       controls.enabled = false;
-      statusEl.textContent = 'Scrambling...';
+      challengeActive = false;
+      statusEl.textContent = asChallenge ? 'Preparing challenge...' : 'Scrambling...';
 
       const axisNames = ['x', 'y', 'z'];
       const outerLayers = [-STEP, STEP];
-      const moves = 24;
+      const moves = asChallenge ? 28 : 24;
 
       for (let i = 0; i < moves; i++) {
         const axisName = axisNames[Math.floor(Math.random() * axisNames.length)];
         const layerCoord = outerLayers[Math.floor(Math.random() * outerLayers.length)];
         const quarterTurns = Math.random() < 0.5 ? 1 : -1;
-        await animateLayerTurn(axisName, layerCoord, quarterTurns * HALF_PI, 115);
+        await animateLayerTurn(axisName, layerCoord, quarterTurns * HALF_PI, asChallenge ? 95 : 115);
+        playTurnSound(0.45);
       }
 
       cleanupCubies();
       busy = false;
-      scrambleBtn.disabled = false;
-      resetBtn.disabled = false;
+      setButtonsDisabled(false);
       controls.enabled = true;
-      statusEl.textContent = 'Ready';
+      if (asChallenge) {
+        startChallengeTimer();
+        statusEl.textContent = 'Challenge running';
+      } else {
+        lastChallengeTime = 0;
+        updateTimerReadout();
+        statusEl.textContent = 'Ready';
+      }
+    }
+
+    challengeBtn.addEventListener('click', () => {
+      if (soundEnabled) ensureAudioContext();
+      scrambleCube({ asChallenge: true });
+    });
+    scrambleBtn.addEventListener('click', () => {
+      if (soundEnabled) ensureAudioContext();
+      scrambleCube();
+    });
+
+    soundBtn.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      localStorage.setItem('rubiksSound', soundEnabled ? 'on' : 'off');
+      updateSoundButton();
+      if (soundEnabled) playTurnSound(0.55);
     });
 
     resetBtn.addEventListener('click', () => {
@@ -768,8 +958,11 @@
       TWEEN.removeAll();
       if (activePivot) finishPivot();
       drag = null;
+      challengeActive = false;
+      lastChallengeTime = 0;
       buildCube();
       cleanupCubies();
+      updateTimerReadout();
       controls.enabled = true;
       statusEl.textContent = 'Reset';
       setTimeout(() => { statusEl.textContent = 'Ready'; }, 600);
@@ -785,6 +978,7 @@
     function animate(time) {
       requestAnimationFrame(animate);
       TWEEN.update(time);
+      if (challengeActive) updateTimerReadout();
       controls.update();
       renderer.render(scene, camera);
     }
