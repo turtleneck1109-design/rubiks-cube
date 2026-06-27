@@ -6,6 +6,12 @@
 
 该 README 用于说明需求来源、实现目标、技术约束和验收要点，便于开发者或 AI 编程助手按统一标准完成实现。
 
+## 在线访问
+
+项目已发布到 GitHub Pages，可通过以下地址访问：
+
+https://cube.turtleneck.top/
+
 ## 需求来源
 
 - 来源链接：https://shuiyuan.sjtu.edu.cn/t/topic/485364/4
