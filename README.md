@@ -14,16 +14,22 @@ https://cube.turtleneck.top/
 
 ## 两个版本
 
-- [经典版 / 计时挑战](https://cube.turtleneck.top/)：保留原有 Challenge、计时成绩、旋转音效和操作方式。
-- [CUBIC 新版 / 智能复原](https://cube.turtleneck.top/cubic.html)：浅色棚拍界面、倒角方块、随几何变化的柔和地面投影，以及当前状态求解和逐步复原动画。
+- [CUBIC 新版 / 默认首页](https://cube.turtleneck.top/)：浅色棚拍界面、倒角方块、动态柔和投影、智能复原、挑战计时和旋转音效。
+- [经典版](https://cube.turtleneck.top/classic.html)：保留原有界面、Challenge、计时成绩和音效。
 
-两版页面均为独立单文件 HTML，并提供相互切换入口。经典版的 `preview.html` 与首页保持一致。
+两版都提供切换入口，每个页面均为独立单文件 HTML。原来的 `cubic.html` 地址继续展示完整新版，`preview.html` 保留为经典版兼容入口。
 
 ### CUBIC 智能复原
 
-求解前从 27 个方块的世界坐标和贴纸法线读取 54 个面片，以当前中心色标定六面，因此兼容中层转动。求解器不读取操作历史；它在 Web Worker 中使用 Kociemba 两阶段算法计算较短解，再通过 Pivot 动画逐步播放。
+求解前从 27 个方块的世界坐标和贴纸法线读取 54 个面片，以当前中心色标定六面，因此兼容中层转动。求解器不读取操作历史；它在 Web Worker 中使用 Kociemba 两阶段算法计算较短解，再通过 Pivot 动画逐步播放。这是快速近似最优解，不保证严格最少步数。
 
-这是快速近似最优解，不保证严格最少步数。首次使用需准备求解表，搜索期间仍可调整视角，重置可中断搜索或动画。内嵌 cubejs 1.3.2 源码及其 MIT 许可，运行时不额外下载求解库；Three.js 等依赖仍通过 importmap 从 unpkg 加载。
+首次使用需准备求解表，搜索期间仍可调整视角，重置可中断搜索或动画。内嵌 cubejs 1.3.2 源码及其 MIT 许可，运行时不额外下载求解库；Three.js 等依赖仍通过 importmap 从 unpkg 加载。
+
+### 新版挑战与音效
+
+点击“挑战”后自动打乱 28 步，打乱结束即开始计时；手动复原后停止计时并保存最佳成绩。点击“智能复原”会结束本轮挑战，机器求解不计成绩；普通打乱和重置会清零当前计时。重新挑战会开启新的一轮。
+
+旋转卡扣声由 Web Audio API 实时合成，支持随时开关。新版与经典版共用 `rubiksBestTime` 和 `rubiksSound` 本地存储键，保留已有最佳成绩和声音偏好；浏览器禁用存储时仍可游玩。
 
 ## 需求来源
 
@@ -108,12 +114,14 @@ https://cube.turtleneck.top/
 ## 建议文件结构
 
 ```text
-index.html          # 经典版（线上首页）
-preview.html        # 经典版预览入口
-cubic.html          # CUBIC 智能复原版
+index.html          # CUBIC 新版（默认首页）
+cubic.html          # CUBIC 新版兼容入口
+classic.html        # 经典版
+preview.html        # 经典版兼容入口
 CNAME               # 自定义域名
 README.md
 prompt-source.txt
 ```
 
-三个 HTML 页面可直接静态托管；`CNAME` 保留现有自定义域名，`README.md` 与 `prompt-source.txt` 为说明文档。
+所有 HTML 页面可直接静态托管；`CNAME` 保留现有自定义域名，`README.md` 与 `prompt-source.txt` 为说明文档。
+

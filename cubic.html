@@ -8,18 +8,22 @@
 @media(max-width:520px){.dock{gap:3px;padding:7px;max-width:calc(100vw - 24px)}.dock button{padding:12px 11px;gap:6px}.dock button span[lang="en"]{display:none}.divider{margin:0 1px}}
 
 .version-nav{display:flex;align-items:center;gap:18px}.classic-link{font-size:11px;color:#66705f;letter-spacing:.5px;text-decoration:none;border:1px solid #cdd2c6;border-radius:7px;padding:8px 11px;white-space:nowrap}.classic-link:hover{color:#26302b;background:#e4edce}@media(max-width:700px){.version-nav .edition{display:none}}
+
+.challenge-panel{margin-top:24px;padding-top:18px;border-top:1px solid #d5d8ce}.challenge-panel label{font-size:10px;letter-spacing:1px}#timerText{display:block;margin:9px 0 10px;font:400 27px/1.2 monospace;font-variant-numeric:tabular-nums;letter-spacing:-1px;color:#48533e}#timerText.running{color:#b36a3f}.best-line{font-size:10px;color:#868e7e}.best-line span{margin-left:9px;font-family:monospace}.version-nav{gap:10px}.sound-toggle{display:inline-flex;align-items:center;gap:6px;border:1px solid #cdd2c6;background:transparent;color:#66705f;border-radius:7px;padding:8px 10px;font-size:11px;white-space:nowrap}.sound-toggle:hover{background:#e4edce}.sound-toggle svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}.sound-toggle.muted .sound-waves{opacity:.2}.dock button{padding-left:16px;padding-right:16px}
+@media(max-width:1000px){.version-nav .edition{display:none}}@media(max-width:700px){.dock button span[lang="en"]{display:none}.dock{gap:3px;padding:7px;max-width:calc(100vw - 24px)}.dock button{padding:12px 11px;gap:6px}.divider{margin:0 1px}.challenge-panel{margin-top:14px;padding-top:12px}#timerText{font-size:22px}.version-nav{gap:6px}.sound-toggle,.classic-link{font-size:10px;padding:8px}.stats{top:109px}.best-line{font-size:9px}}
+@media(max-height:600px){.challenge-panel{margin-top:10px;padding-top:10px}#timerText{font-size:22px}}
 </style>
 <!-- 固定版本，避免 CDN 更新带来 API 差异；运行仅需联网下载这几个 JS 模块。 -->
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.170.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.170.0/examples/jsm/","@tweenjs/tween.js":"https://unpkg.com/@tweenjs/tween.js@25.0.0/dist/tween.esm.js"}}</script>
 </head>
 <body>
 <div class="studio" id="studio"></div>
-<header><div class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>CUBIC</div><div class="version-nav"><div class="edition">INTERACTIVE OBJECTS / 001</div><a class="classic-link" href="./index.html">经典版 · 计时挑战 ↗</a></div></header>
+<header><div class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>CUBIC</div><div class="version-nav"><div class="edition">INTERACTIVE OBJECTS / 001</div><button id="sound" class="sound-toggle" type="button" aria-pressed="true" aria-label="关闭旋转音效"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m11 5-6 4H2v6h3l6 4V5Z"/><path class="sound-waves" d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg><span id="soundText">声音 开</span></button><a class="classic-link" href="./classic.html">经典版 ↗</a></div></header>
 <section class="intro"><div class="eyebrow">指尖魔方实验室</div><h1>转动，<br>皆有可能。</h1><p>六面色彩，万千可能。<br>让思绪在指尖重新排列。</p><div class="spec"><span>3 × 3 × 3</span><span>27 CUBIES</span><span>WEBGL</span></div></section>
-<div class="stats"><label>转动步数</label><output id="moves">00</output><small id="state">SOLVED / 已复原</small></div>
+<div class="stats"><label>转动步数</label><output id="moves">00</output><small id="state">SOLVED / 已复原</small><div class="challenge-panel"><label id="challengeLabel">挑战计时</label><output id="timerText">00:00.00</output><div class="best-line">最佳 <span id="bestText">--:--.--</span></div></div></div>
 <div class="coordinate">DESIGNED TO BE TURNED<br><b>X / Y / Z</b> &nbsp; 自由探索每一面</div>
 <div class="status" role="status" aria-live="polite"><i></i><span id="status">就绪 · 拖动任一色块开始</span><span id="angle"></span></div>
-<nav class="dock" aria-label="魔方控制"><button class="primary" id="scramble" title="随机转动 20 次"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h3c5 0 7 12 12 12h3m-4-4 4 4-4 4M3 18h3c2.5 0 4.3-3 6-6s3.5-6 6-6h3m-4-4 4 4-4 4"/></svg>打乱 <span lang="en">Scramble</span></button><button id="solve" title="读取当前六面状态，计算近似最优解并播放" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 10 7-10 7V5Z"/><path d="M4 5v14"/></svg>智能复原 <span lang="en">Solve</span></button><span class="divider"></span><button id="reset"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></svg>重置 <span lang="en">Reset</span></button></nav>
+<nav class="dock" aria-label="魔方控制"><button id="challenge" title="打乱 28 步后开始计时，手动复原完成挑战"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="14" r="8"/><path d="M9 2h6m-3 4V2m0 7v5l3 2m4-10 2 2"/></svg>挑战 <span lang="en">Challenge</span></button><button class="primary" id="scramble" title="随机转动 20 次"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h3c5 0 7 12 12 12h3m-4-4 4 4-4 4M3 18h3c2.5 0 4.3-3 6-6s3.5-6 6-6h3m-4-4 4 4-4 4"/></svg>打乱 <span lang="en">Scramble</span></button><button id="solve" title="读取当前六面状态，计算近似最优解并播放" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 10 7-10 7V5Z"/><path d="M4 5v14"/></svg>智能复原 <span lang="en">Solve</span></button><span class="divider"></span><button id="reset"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></svg>重置 <span lang="en">Reset</span></button></nav>
 <div class="tips"><span class="desktop-tip">左键拖动 · 转动层</span><span class="desktop-tip">右键拖动 · 旋转视角</span><span class="desktop-tip">滚轮 · 缩放</span><span class="touch-tip">色块拖动 · 转层</span><span class="touch-tip">空白拖动 · 视角</span><span class="touch-tip">双指 · 缩放 / 视角</span></div>
 <footer>TAKE A TURN. FIND YOUR FLOW.</footer>
 <div id="loading" class="loading"><div><b>CUBIC</b><p id="load-message">正在准备你的魔方…</p></div></div>
@@ -2223,10 +2227,82 @@ for(let x=-1;x<=1;x++)for(let y=-1;y<=1;y++)for(let z=-1;z<=1;z++){
 }
 let active=null,gesture=null,busy=false,moveCount=0,generation=0;
 const tweenGroup=new Group();
-const status=document.getElementById('status'),angleLabel=document.getElementById('angle'),scrambleButton=document.getElementById('scramble'),solveButton=document.getElementById('solve');
+const status=document.getElementById('status'),angleLabel=document.getElementById('angle'),scrambleButton=document.getElementById('scramble'),solveButton=document.getElementById('solve'),challengeButton=document.getElementById('challenge'),soundButton=document.getElementById('sound');
 function setStatus(text){status.textContent=text;}
-function updateButtons(){scrambleButton.disabled=busy;solveButton.disabled=busy||isSolved();}
+function updateButtons(){challengeButton.disabled=busy;scrambleButton.disabled=busy;solveButton.disabled=busy||isSolved();}
 function setBusy(value){busy=value;updateButtons();}
+// 与经典版共用本地成绩与声音偏好；禁用存储时仍可正常计时和游玩。
+function readPreference(key,fallback){try{return localStorage.getItem(key)??fallback;}catch{return fallback;}}
+function savePreference(key,value){try{localStorage.setItem(key,String(value));}catch{}}
+const savedBest=Number(readPreference('rubiksBestTime','0'));
+let bestChallengeTime=Number.isFinite(savedBest)&&savedBest>0?savedBest:0;
+let challengePhase='idle',challengeStart=0,challengeElapsed=0,challengeFinishText='';
+let soundEnabled=readPreference('rubiksSound','on')!=='off',audioCtx=null,audioUnavailable=false;
+const timerText=document.getElementById('timerText'),bestText=document.getElementById('bestText'),challengeLabel=document.getElementById('challengeLabel');
+function formatTime(ms){
+ const cs=Math.max(0,Math.floor(ms/10));
+ return String(Math.floor(cs/6000)).padStart(2,'0')+':'+String(Math.floor(cs/100)%60).padStart(2,'0')+'.'+String(cs%100).padStart(2,'0');
+}
+function updateTimerReadout(){
+ timerText.textContent=formatTime(challengePhase==='running'?performance.now()-challengeStart:challengeElapsed);
+ bestText.textContent=bestChallengeTime?formatTime(bestChallengeTime):'--:--.--';
+ const labels={idle:'挑战计时',preparing:'挑战准备中',running:'挑战进行中',completed:'挑战已完成',cancelled:'本次不计成绩'};
+ challengeLabel.textContent=labels[challengePhase];
+ timerText.classList.toggle('running',challengePhase==='running');
+}
+function cancelChallenge(resetTime=true){
+ if(challengePhase==='running')challengeElapsed=performance.now()-challengeStart;
+ const inProgress=challengePhase==='running'||challengePhase==='preparing';
+ challengePhase=resetTime?'idle':inProgress?'cancelled':challengePhase;
+ if(resetTime)challengeElapsed=0;challengeFinishText='';updateTimerReadout();
+}
+function startChallengeTimer(){challengePhase='running';challengeStart=performance.now();challengeElapsed=0;challengeFinishText='';updateTimerReadout();}
+function checkChallengeSolved(){
+ if(challengePhase!=='running'||!isSolved())return;
+ challengeElapsed=performance.now()-challengeStart;challengePhase='completed';
+ const newBest=!bestChallengeTime||challengeElapsed<bestChallengeTime;
+ if(newBest){bestChallengeTime=challengeElapsed;savePreference('rubiksBestTime',bestChallengeTime);}
+ challengeFinishText='挑战完成 · '+formatTime(challengeElapsed)+(newBest?' · 新纪录':'');
+ updateTimerReadout();setStatus(challengeFinishText);
+}
+function idleStatus(){return challengePhase==='running'?'挑战进行中 · 手动复原以完成挑战':challengeFinishText||'就绪 · 拖动任一色块开始';}
+function updateSoundButton(){
+ soundButton.setAttribute('aria-pressed',String(soundEnabled));
+ soundButton.setAttribute('aria-label',audioUnavailable?'旋转音效不可用':soundEnabled?'关闭旋转音效':'开启旋转音效');
+ document.getElementById('soundText').textContent=audioUnavailable?'声音不可用':soundEnabled?'声音 开':'声音 关';
+ soundButton.classList.toggle('muted',!soundEnabled);soundButton.disabled=audioUnavailable;
+}
+function ensureAudioContext(){
+ if(!soundEnabled||audioUnavailable)return null;
+ try{
+  const Audio=window.AudioContext||window.webkitAudioContext;
+  if(!Audio)throw new Error('Audio unavailable');
+  if(!audioCtx)audioCtx=new Audio();
+  if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+  return audioCtx;
+ }catch{audioUnavailable=true;soundEnabled=false;updateSoundButton();return null;}
+}
+function playTurnSound(strength=1){
+ const ctx=ensureAudioContext();if(!ctx||ctx.state!=='running')return;
+ // Web Audio 实时合成短噪声与低频卡扣声，不加载音频文件。
+ try{
+  const now=ctx.currentTime,duration=.055;
+  const buffer=ctx.createBuffer(1,Math.floor(ctx.sampleRate*duration),ctx.sampleRate),samples=buffer.getChannelData(0);
+  for(let i=0;i<samples.length;i++)samples[i]=(Math.random()*2-1)*(1-i/samples.length);
+  const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),noiseGain=ctx.createGain();noise.buffer=buffer;
+  filter.type='bandpass';filter.frequency.setValueAtTime(1300+Math.random()*420,now);filter.Q.setValueAtTime(7,now);
+  noiseGain.gain.setValueAtTime(.0001,now);noiseGain.gain.exponentialRampToValueAtTime(.11*strength,now+.004);noiseGain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+  const knock=ctx.createOscillator(),knockGain=ctx.createGain();knock.type='square';
+  knock.frequency.setValueAtTime(92+Math.random()*16,now);knock.frequency.exponentialRampToValueAtTime(58+Math.random()*8,now+.045);
+  knockGain.gain.setValueAtTime(.0001,now);knockGain.gain.exponentialRampToValueAtTime(.035*strength,now+.003);knockGain.gain.exponentialRampToValueAtTime(.0001,now+.052);
+  noise.connect(filter).connect(noiseGain).connect(ctx.destination);knock.connect(knockGain).connect(ctx.destination);
+  noise.onended=()=>{noise.disconnect();filter.disconnect();noiseGain.disconnect();};knock.onended=()=>{knock.disconnect();knockGain.disconnect();};
+  noise.start(now);noise.stop(now+duration);knock.start(now);knock.stop(now+.06);
+ }catch{/* 声音设备不可用时，不中断魔方转动或挑战计时。 */}
+}
+soundButton.addEventListener('click',()=>{soundEnabled=!soundEnabled;savePreference('rubiksSound',soundEnabled?'on':'off');updateSoundButton();if(soundEnabled)ensureAudioContext();});
+updateSoundButton();updateTimerReadout();
+
 function isSolved(){
  // 按当前朝外的法线聚合颜色，允许中层转动和整体朝向变化。
  const colors=new Map(),normal=new THREE.Vector3();scene.updateMatrixWorld(true);
@@ -2261,7 +2337,8 @@ function commitLayer(count=true){
  if(!active)return;const {pivot,selected,angle}=active;
  pivot.updateMatrixWorld(true);for(const c of selected)scene.attach(c);scene.remove(pivot);active=null;
  cleanGrid();const turns=Math.round(angle/HALF);
- if(count&&Math.abs(turns)%4!==0)moveCount++;
+ if(Math.abs(turns)%4!==0){if(count)moveCount++;playTurnSound(count?1:.45);}
+ if(count)checkChallengeSolved();
  angleLabel.textContent='';updateReadout();
 }
 function animateTo(target,duration,count=true){
@@ -2269,11 +2346,11 @@ function animateTo(target,duration,count=true){
 }
 async function releaseGesture(cancel=false){
  if(!gesture)return;gesture=null;controls.enabled=true;canvas.style.cursor='grab';
- if(!active){setStatus('就绪 · 拖动任一色块开始');return;}
+ if(!active){setStatus(idleStatus());return;}
  setBusy(true);const token=generation;
  const target=cancel?0:Math.round(active.angle/HALF)*HALF;
  setStatus('吸附对齐');await animateTo(target,180+Math.min(180,Math.abs(target-active.angle)*170));
- if(token!==generation)return;setBusy(false);setStatus(isSolved()?'已复原 · 每一面，恰到好处':'就绪 · 继续探索');
+ if(token!==generation)return;setBusy(false);setStatus(challengePhase==='running'||challengeFinishText?idleStatus():isSolved()?'已复原 · 每一面，恰到好处':'就绪 · 继续探索');
 }
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 function hitAt(x,y){const rect=canvas.getBoundingClientRect();pointer.set((x-rect.left)/rect.width*2-1,-(y-rect.top)/rect.height*2+1);raycaster.setFromCamera(pointer,camera);scene.updateMatrixWorld(true);return raycaster.intersectObjects(pickables,false)[0];}
@@ -2312,7 +2389,7 @@ canvas.addEventListener('pointerdown',e=>{
  }
  if(e.button!==0||busy||gesture||touchOrbit)return;
  const hit=hitAt(e.clientX,e.clientY);if(!hit)return;
- e.preventDefault();e.stopImmediatePropagation();controls.enabled=false;
+ e.preventDefault();e.stopImmediatePropagation();ensureAudioContext();controls.enabled=false;
  canvas.setPointerCapture(e.pointerId);canvas.style.cursor='grabbing';
  const normal=dominantNormal(hit.face.normal.clone().transformDirection(hit.object.matrixWorld));
  gesture={id:e.pointerId,start:new THREE.Vector2(e.clientX,e.clientY),current:new THREE.Vector2(e.clientX,e.clientY),hit:hit.point.clone(),normal,cubie:hit.object.userData.cubie,choice:null};
@@ -2338,17 +2415,24 @@ canvas.addEventListener('contextmenu',e=>e.preventDefault());
 window.addEventListener('blur',()=>{touches.clear();touchOrbit=false;if(gesture)releaseGesture(true);});
 canvas.style.cursor='grab';
 
-scrambleButton.addEventListener('click',async()=>{
- if(busy||gesture||active)return;setBusy(true);const token=++generation;let previous='';
- for(let i=0;i<20;i++){
+async function scrambleCube(asChallenge=false){
+ if(busy||gesture||active)return;
+ ensureAudioContext();cancelChallenge();setBusy(true);const token=++generation,total=asChallenge?28:20;let previous='';
+ if(asChallenge){challengePhase='preparing';updateTimerReadout();}
+ for(let i=0;i<total;i++){
   if(token!==generation)return;
   const options=Object.keys(AXES).filter(a=>a!==previous),axis=options[Math.floor(Math.random()*options.length)];previous=axis;
   const layer=Math.floor(Math.random()*3)-1,direction=Math.random()<.5?-1:1;
-  beginLayer(axis,layer);setStatus('正在打乱 · '+(i+1)+' / 20');
-  const finished=await animateTo(direction*HALF,135,false);if(!finished||token!==generation)return;
+  beginLayer(axis,layer);setStatus((asChallenge?'正在准备挑战':'正在打乱')+' · '+(i+1)+' / '+total);
+  const finished=await animateTo(direction*HALF,asChallenge?110:135,false);if(!finished||token!==generation)return;
  }
- moveCount=0;setBusy(false);updateReadout();setStatus('打乱完成 · 从这里开始');
-});
+ // 极小概率打乱回到复原态时，补一个转动，避免空挑战。
+ if(isSolved()){beginLayer('x',1);const finished=await animateTo(HALF,135,false);if(!finished||token!==generation)return;}
+ moveCount=0;setBusy(false);updateReadout();
+ if(asChallenge){startChallengeTimer();setStatus(idleStatus());}else setStatus('打乱完成 · 从这里开始');
+}
+scrambleButton.addEventListener('click',()=>scrambleCube(false));
+challengeButton.addEventListener('click',()=>scrambleCube(true));
 // 从空间位置和贴纸朝向读取当前状态。六面均按从面外正视的行优先顺序排列。
 // 中层转动会改变中心色：以“当前中心色”重新标定 URFDLB，不依赖初始色朝向。
 function readFacelets(){
@@ -2416,7 +2500,8 @@ function searchCurrentState(facelets){
 }
 solveButton.addEventListener('click',async()=>{
  if(busy||gesture||active||isSolved())return;
- setBusy(true);const token=++generation;
+ // 机器求解不能计入手动挑战成绩；即使搜索失败，本轮也不再记分。
+ ensureAudioContext();cancelChallenge(false);setBusy(true);const token=++generation;
  try{
   setStatus('正在读取六面状态');
   const algorithm=await searchCurrentState(readFacelets());
@@ -2435,18 +2520,19 @@ solveButton.addEventListener('click',async()=>{
  finally{if(token===generation)setBusy(false);}
 });
 document.getElementById('reset').addEventListener('click',()=>{
- generation++;cancelSolver();for(const tween of tweenGroup.getAll())tween.stop();tweenGroup.removeAll();
+ generation++;cancelSolver();cancelChallenge();for(const tween of tweenGroup.getAll())tween.stop();tweenGroup.removeAll();
  const oldGesture=gesture;gesture=null;if(oldGesture&&canvas.hasPointerCapture(oldGesture.id))canvas.releasePointerCapture(oldGesture.id);
  if(active){for(const c of active.selected)scene.attach(c);scene.remove(active.pivot);active=null;}
  for(const c of cubies){c.position.copy(c.userData.home);c.rotation.set(0,0,0);}
  moveCount=0;setBusy(false);controls.enabled=true;controls.reset();controls.update();angleLabel.textContent='';canvas.style.cursor='grab';cleanGrid();updateReadout();setStatus('已重置 · 再来一次新的可能');
 });
-function resize(){if(gesture)releaseGesture(true);camera.aspect=innerWidth/innerHeight;camera.fov=innerWidth<700?46:36;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));}
+function resize(){if(gesture)releaseGesture(true);camera.aspect=innerWidth/innerHeight;camera.fov=innerWidth<700?46:36;camera.setViewOffset(innerWidth,innerHeight,0,innerWidth>=700?Math.max(0,Math.min(48,(860-innerHeight)*.32)):0,innerWidth,innerHeight);camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));}
 window.addEventListener('resize',resize);resize();
-renderer.setAnimationLoop(time=>{tweenGroup.update(time,false);controls.update();if(active||shadowDirty)renderContactShadow();renderer.render(scene,camera);});
+renderer.setAnimationLoop(time=>{tweenGroup.update(time,false);if(challengePhase==='running')updateTimerReadout();controls.update();if(active||shadowDirty)renderContactShadow();renderer.render(scene,camera);});
 canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();window.showCubeError('图形上下文已中断，请刷新页面重新加载。');});
 window.cubeReady=true;clearTimeout(window.cubeLoadTimer);document.getElementById('loading').hidden=true;
 // 只读诊断入口：用于验证网格与视觉交互，不另建魔方逻辑状态。
-window.cubeDiagnostics=()=>({cubies:cubies.length,stickers:pickables.filter(m=>m.userData.color).length,active:active?{axis:active.axis,layer:active.layer,angle:active.angle,count:active.selected.length}:null,busy,solved:isSolved(),positions:cubies.map(c=>c.getWorldPosition(new THREE.Vector3()).toArray()),moves:moveCount});
+window.cubeDiagnostics=()=>({cubies:cubies.length,stickers:pickables.filter(m=>m.userData.color).length,active:active?{axis:active.axis,layer:active.layer,angle:active.angle,count:active.selected.length}:null,busy,challengePhase,challengeElapsed:challengePhase==='running'?performance.now()-challengeStart:challengeElapsed,bestChallengeTime,soundEnabled,solved:isSolved(),positions:cubies.map(c=>c.getWorldPosition(new THREE.Vector3()).toArray()),moves:moveCount});
 </script>
 </body></html>
+

@@ -1,994 +1,2538 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Physical 3x3 Rubik's Cube - Three.js Single File</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#eeede8"><title>CUBIC — 指尖魔方实验室</title>
+<style>
+:root{color-scheme:light;--ink:#242b28;--muted:#7d827d;--paper:#eeede8;--accent:#eb7048}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,"Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:5px}header{position:absolute;z-index:2;top:0;width:100%;padding:30px 42px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:12px;font-size:23px;font-weight:800;letter-spacing:3px}.mark{width:26px;height:26px;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;transform:rotate(-8deg)}.mark i{background:var(--ink);border-radius:1px}.mark i:nth-child(3){background:var(--accent)}.edition{font:11px monospace;color:var(--muted);letter-spacing:2px}.intro{position:absolute;z-index:2;top:133px;left:42px;pointer-events:none}.eyebrow{font:10px monospace;letter-spacing:2.5px;color:#8b8e84}.eyebrow:before{content:"";display:inline-block;width:19px;height:1px;background:var(--accent);vertical-align:middle;margin-right:10px}h1{font-size:clamp(30px,3.2vw,49px);font-weight:500;line-height:1.4;letter-spacing:-1.5px;margin:20px 0 14px}.intro p{font-size:12px;line-height:2;color:var(--muted);letter-spacing:1px}.spec{margin-top:37px;display:flex;gap:8px}.spec span{font:9px monospace;padding:6px 8px;border:1px solid #d4d5ce;border-radius:4px;color:#7f867e}.stats{position:absolute;top:143px;right:43px;z-index:2;text-align:right;pointer-events:none}.stats label{display:block;font-size:10px;letter-spacing:2px;color:var(--muted)}#moves{display:block;font:300 48px/1.5 monospace;color:#424c44}.stats small{display:block;font:10px monospace;color:#9b9e95}.studio{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 45%,#faf9f5 0%,#f0efe9 43%,#e7e8e1 100%)}canvas{display:block;width:100%;height:100%;touch-action:none;outline:none}.coordinate{position:absolute;bottom:122px;left:42px;font:10px/2 monospace;color:#989e95;pointer-events:none;letter-spacing:1px}.coordinate b{color:#777e74;font-weight:400}.dock{position:absolute;z-index:3;bottom:61px;left:50%;transform:translateX(-50%);display:flex;align-items:center;padding:9px;gap:7px;background:#26302b;border:1px solid #49524a;border-radius:18px;box-shadow:0 12px 28px #25302320}.dock button{border:0;padding:13px 20px;border-radius:10px;color:#f0f2e9;background:transparent;display:flex;align-items:center;gap:10px;white-space:nowrap;font-size:12px;transition:background .2s,transform .2s}.dock button:hover{background:#3a463d}.dock button:active{transform:scale(.96)}.dock .primary{background:#e4edce;color:#29392b}.dock .primary:hover{background:#f0f7df}.dock button:disabled{opacity:.45;cursor:wait}.dock svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.divider{height:22px;width:1px;background:#4e574e;margin:0 3px}.tips{position:absolute;z-index:2;bottom:26px;width:100%;text-align:center;font-size:10px;letter-spacing:.7px;color:#81877d}.tips span+span:before{content:"·";margin:0 14px;color:#adb2a6}footer{position:absolute;right:42px;bottom:29px;font:9px monospace;color:#959c8e;letter-spacing:1px}.status{position:absolute;z-index:2;left:50%;bottom:156px;transform:translateX(-50%);display:flex;gap:7px;align-items:center;font-size:10px;letter-spacing:1px;color:#7d8578;white-space:nowrap;pointer-events:none}.status i{width:5px;height:5px;background:#81976b;border-radius:50%}#angle{font-family:monospace}.loading{position:absolute;z-index:5;inset:0;background:#eeede8e8;display:grid;place-content:center;text-align:center;font-size:13px;line-height:2;color:#6b7367}.loading[hidden]{display:none}.loading b{font:16px monospace;letter-spacing:4px;color:#26302b}.error-text{max-width:380px;padding:24px}.touch-tip{display:none}@media(max-width:700px){header{padding:23px}.brand{font-size:20px}.edition{font-size:9px;letter-spacing:1px}.intro{top:96px;left:24px}h1{font-size:29px;margin:13px 0 6px}.intro p{font-size:10px}.spec{display:none}.stats{top:109px;right:24px}#moves{font-size:33px}.stats small{font-size:8px}.coordinate,footer{display:none}.dock{bottom:70px;border-radius:15px}.dock button{padding:12px 16px}.tips{bottom:29px;font-size:9px}.tips span+span:before{margin:0 8px}.status{bottom:155px}}@media(pointer:coarse){.desktop-tip{display:none}.touch-tip{display:inline}}@media(max-height:600px){.intro{top:85px}.intro h1{font-size:28px}.intro p,.spec,.coordinate{display:none}.stats{top:90px}.dock{bottom:42px}.tips{bottom:15px}.status{bottom:120px}header{padding-top:20px}footer{display:none}}
+@media(max-width:520px){.dock{gap:3px;padding:7px;max-width:calc(100vw - 24px)}.dock button{padding:12px 11px;gap:6px}.dock button span[lang="en"]{display:none}.divider{margin:0 1px}}
 
-  <!--
-    依赖管理：全部通过 importmap 引入 ES Modules。
-    贴图、材质纹理全部在运行时用 Canvas API 生成；没有任何外部图片/贴图资源。
-  -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.164.1/examples/jsm/",
-      "@tweenjs/tween.js": "https://unpkg.com/@tweenjs/tween.js@23.1.3/dist/tween.esm.js"
-    }
-  }
-  </script>
+.version-nav{display:flex;align-items:center;gap:18px}.classic-link{font-size:11px;color:#66705f;letter-spacing:.5px;text-decoration:none;border:1px solid #cdd2c6;border-radius:7px;padding:8px 11px;white-space:nowrap}.classic-link:hover{color:#26302b;background:#e4edce}@media(max-width:700px){.version-nav .edition{display:none}}
 
-  <style>
-    html, body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      background: radial-gradient(circle at 50% 35%, #263246 0%, #111723 48%, #080b10 100%);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: #f6f7fb;
-      user-select: none;
-    }
-
-    #app {
-      position: fixed;
-      inset: 0;
-    }
-
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      touch-action: none;
-      cursor: grab;
-    }
-
-    canvas.dragging {
-      cursor: grabbing;
-    }
-
-    .hud {
-      position: fixed;
-      left: 18px;
-      top: 18px;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      pointer-events: none;
-    }
-
-    .panel {
-      width: min(420px, calc(100vw - 36px));
-      box-sizing: border-box;
-      padding: 14px 16px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 18px;
-      background: rgba(9, 12, 20, 0.62);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
-      backdrop-filter: blur(16px);
-    }
-
-    .title {
-      font-size: 16px;
-      font-weight: 760;
-      letter-spacing: 0.02em;
-      margin-bottom: 8px;
-    }
-
-    .hint {
-      font-size: 13px;
-      line-height: 1.55;
-      color: rgba(246, 247, 251, 0.78);
-    }
-
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      pointer-events: auto;
-    }
-
-    button {
-      border: 0;
-      border-radius: 999px;
-      padding: 10px 16px;
-      color: #fff;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      background: linear-gradient(180deg, rgba(95, 131, 255, 0.98), rgba(54, 86, 214, 0.98));
-      box-shadow: 0 10px 26px rgba(57, 91, 228, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.22);
-      cursor: pointer;
-      transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
-    }
-
-    button.secondary {
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08));
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    }
-
-    button:hover { transform: translateY(-1px); filter: brightness(1.06); }
-    button:active { transform: translateY(1px) scale(0.98); }
-    button:disabled { opacity: 0.48; cursor: not-allowed; transform: none; }
-
-    .challenge-readout {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px 14px;
-      align-items: center;
-      font-size: 13px;
-      color: rgba(246, 247, 251, 0.78);
-    }
-
-    .challenge-readout strong {
-      font-size: 22px;
-      line-height: 1;
-      color: #fff;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .challenge-readout span {
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-
-    .status {
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      z-index: 10;
-      padding: 10px 14px;
-      border-radius: 999px;
-      color: rgba(255, 255, 255, 0.78);
-      font-size: 12px;
-      background: rgba(9, 12, 20, 0.55);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
-      pointer-events: none;
-    }
-
-    .version-link { display:inline-flex;align-items:center;padding:10px 16px;border:1px solid rgba(255,255,255,.22);border-radius:999px;color:#e4edce;text-decoration:none;font-size:13px;font-weight:700;background:rgba(9,12,20,.62);pointer-events:auto; }
-    .version-link:hover { background:rgba(95,131,255,.26); }
-    .version-link:focus-visible { outline:3px solid #e4edce;outline-offset:3px; }
-  </style>
+.challenge-panel{margin-top:24px;padding-top:18px;border-top:1px solid #d5d8ce}.challenge-panel label{font-size:10px;letter-spacing:1px}#timerText{display:block;margin:9px 0 10px;font:400 27px/1.2 monospace;font-variant-numeric:tabular-nums;letter-spacing:-1px;color:#48533e}#timerText.running{color:#b36a3f}.best-line{font-size:10px;color:#868e7e}.best-line span{margin-left:9px;font-family:monospace}.version-nav{gap:10px}.sound-toggle{display:inline-flex;align-items:center;gap:6px;border:1px solid #cdd2c6;background:transparent;color:#66705f;border-radius:7px;padding:8px 10px;font-size:11px;white-space:nowrap}.sound-toggle:hover{background:#e4edce}.sound-toggle svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}.sound-toggle.muted .sound-waves{opacity:.2}.dock button{padding-left:16px;padding-right:16px}
+@media(max-width:1000px){.version-nav .edition{display:none}}@media(max-width:700px){.dock button span[lang="en"]{display:none}.dock{gap:3px;padding:7px;max-width:calc(100vw - 24px)}.dock button{padding:12px 11px;gap:6px}.divider{margin:0 1px}.challenge-panel{margin-top:14px;padding-top:12px}#timerText{font-size:22px}.version-nav{gap:6px}.sound-toggle,.classic-link{font-size:10px;padding:8px}.stats{top:109px}.best-line{font-size:9px}}
+@media(max-height:600px){.challenge-panel{margin-top:10px;padding-top:10px}#timerText{font-size:22px}}
+</style>
+<!-- 固定版本，避免 CDN 更新带来 API 差异；运行仅需联网下载这几个 JS 模块。 -->
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.170.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.170.0/examples/jsm/","@tweenjs/tween.js":"https://unpkg.com/@tweenjs/tween.js@25.0.0/dist/tween.esm.js"}}</script>
 </head>
 <body>
-  <div id="app"></div>
+<div class="studio" id="studio"></div>
+<header><div class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>CUBIC</div><div class="version-nav"><div class="edition">INTERACTIVE OBJECTS / 001</div><button id="sound" class="sound-toggle" type="button" aria-pressed="true" aria-label="关闭旋转音效"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m11 5-6 4H2v6h3l6 4V5Z"/><path class="sound-waves" d="M15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></svg><span id="soundText">声音 开</span></button><a class="classic-link" href="./classic.html">经典版 ↗</a></div></header>
+<section class="intro"><div class="eyebrow">指尖魔方实验室</div><h1>转动，<br>皆有可能。</h1><p>六面色彩，万千可能。<br>让思绪在指尖重新排列。</p><div class="spec"><span>3 × 3 × 3</span><span>27 CUBIES</span><span>WEBGL</span></div></section>
+<div class="stats"><label>转动步数</label><output id="moves">00</output><small id="state">SOLVED / 已复原</small><div class="challenge-panel"><label id="challengeLabel">挑战计时</label><output id="timerText">00:00.00</output><div class="best-line">最佳 <span id="bestText">--:--.--</span></div></div></div>
+<div class="coordinate">DESIGNED TO BE TURNED<br><b>X / Y / Z</b> &nbsp; 自由探索每一面</div>
+<div class="status" role="status" aria-live="polite"><i></i><span id="status">就绪 · 拖动任一色块开始</span><span id="angle"></span></div>
+<nav class="dock" aria-label="魔方控制"><button id="challenge" title="打乱 28 步后开始计时，手动复原完成挑战"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="14" r="8"/><path d="M9 2h6m-3 4V2m0 7v5l3 2m4-10 2 2"/></svg>挑战 <span lang="en">Challenge</span></button><button class="primary" id="scramble" title="随机转动 20 次"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h3c5 0 7 12 12 12h3m-4-4 4 4-4 4M3 18h3c2.5 0 4.3-3 6-6s3.5-6 6-6h3m-4-4 4 4-4 4"/></svg>打乱 <span lang="en">Scramble</span></button><button id="solve" title="读取当前六面状态，计算近似最优解并播放" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 10 7-10 7V5Z"/><path d="M4 5v14"/></svg>智能复原 <span lang="en">Solve</span></button><span class="divider"></span><button id="reset"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></svg>重置 <span lang="en">Reset</span></button></nav>
+<div class="tips"><span class="desktop-tip">左键拖动 · 转动层</span><span class="desktop-tip">右键拖动 · 旋转视角</span><span class="desktop-tip">滚轮 · 缩放</span><span class="touch-tip">色块拖动 · 转层</span><span class="touch-tip">空白拖动 · 视角</span><span class="touch-tip">双指 · 缩放 / 视角</span></div>
+<footer>TAKE A TURN. FIND YOUR FLOW.</footer>
+<div id="loading" class="loading"><div><b>CUBIC</b><p id="load-message">正在准备你的魔方…</p></div></div>
+<script>
+// 模块下载错误也应给出可见提示，而不是永远停在空白画面。
+window.showCubeError=function(message){document.getElementById('loading').hidden=false;document.getElementById('load-message').textContent=message;};
+window.addEventListener('error',e=>{if(e.message)window.showCubeError('启动失败：'+e.message);});
+window.addEventListener('unhandledrejection',e=>window.showCubeError('加载失败，请检查网络与 WebGL 支持后刷新。'+(e.reason?.message||'')));
+window.cubeLoadTimer=setTimeout(()=>{if(!window.cubeReady)window.showCubeError('模块尚未加载。请检查网络是否能访问 unpkg.com，然后刷新页面。');},20000);
+</script>
+<script id="cube-solver" type="text/plain">
+/* cubejs 1.3.2 — https://github.com/ldez/cubejs
+Copyright (c) 2013-2017 Petri Lehtinen <petri@digip.org>
+Copyright (c) 2018 Ludovic Fernandez
 
-  <div class="hud">
-    <div class="panel">
-      <div class="title">3×3 Physical Rubik's Cube</div>
-      <div class="hint">
-        左键按住任意贴纸/小方块并拖拽：旋转对应层。<br />
-        右键拖拽：旋转视角。松开左键后自动磁吸到最近的 90°。
-      </div>
-    </div>
-    <div class="buttons">
-      <a class="version-link" href="./cubic.html">体验 CUBIC 新版 · 智能复原 ↗</a>
-      <button id="challengeBtn">Challenge</button>
-      <button id="scrambleBtn">Scramble</button>
-      <button id="resetBtn" class="secondary">Reset</button>
-      <button id="soundBtn" class="secondary" aria-pressed="true">Sound On</button>
-    </div>
-    <div class="panel challenge-readout">
-      <span>Challenge time</span>
-      <strong id="timerText">00:00.00</strong>
-      <span>Best</span>
-      <span id="bestText">--:--.--</span>
-    </div>
-  </div>
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-  <div id="status" class="status">Ready</div>
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
-  <script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-    import * as TWEEN from '@tweenjs/tween.js';
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
-    // ============================================================
-    // 基础常量：用 STEP > CUBIE_SIZE 形成真实魔方的小方块物理间隙。
-    // ============================================================
-    const CUBIE_SIZE = 0.96;
-    const SPACING = 0.095;
-    const STEP = CUBIE_SIZE + SPACING;
-    const STICKER_SIZE = CUBIE_SIZE * 0.72;
-    const STICKER_OFFSET = CUBIE_SIZE / 2 + 0.012;
-    const EPSILON = STEP * 0.28;
-    const HALF_PI = Math.PI / 2;
-    const PIXEL_TO_RAD = 0.0125;
-    const DRAG_THRESHOLD = 5;
+Local modifications: return null for failed bounded searches; include zero-length phases; use ascending bounded loops and initialize root phase-2 coordinates to support shallow states correctly.
+*/
+(function() {
+  // Centers
+  var B, BL, BR, Cube, D, DB, DBL, DF, DFR, DL, DLF, DR, DRB, F, FL, FR, L, R, U, UB, UBR, UF, UFL, UL, ULB, UR, URF, centerColor, centerFacelet, cornerColor, cornerFacelet, edgeColor, edgeFacelet;
 
-    const AXES = {
-      x: new THREE.Vector3(1, 0, 0),
-      y: new THREE.Vector3(0, 1, 0),
-      z: new THREE.Vector3(0, 0, 1)
+  [U, R, F, D, L, B] = [0, 1, 2, 3, 4, 5];
+
+  // Corners
+  [URF, UFL, ULB, UBR, DFR, DLF, DBL, DRB] = [0, 1, 2, 3, 4, 5, 6, 7];
+
+  // Edges
+  [UR, UF, UL, UB, DR, DF, DL, DB, FR, FL, BL, BR] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+  [centerFacelet, cornerFacelet, edgeFacelet] = (function() {
+    var _B, _D, _F, _L, _R, _U;
+    _U = function(x) {
+      return x - 1;
+    };
+    _R = function(x) {
+      return _U(9) + x;
+    };
+    _F = function(x) {
+      return _R(9) + x;
+    };
+    _D = function(x) {
+      return _F(9) + x;
+    };
+    _L = function(x) {
+      return _D(9) + x;
+    };
+    _B = function(x) {
+      return _L(9) + x;
+    };
+    return [
+      // Centers
+      [4,
+      13,
+      22,
+      31,
+      40,
+      49],
+      // Corners
+      [[_U(9),
+      _R(1),
+      _F(3)],
+      [_U(7),
+      _F(1),
+      _L(3)],
+      [_U(1),
+      _L(1),
+      _B(3)],
+      [_U(3),
+      _B(1),
+      _R(3)],
+      [_D(3),
+      _F(9),
+      _R(7)],
+      [_D(1),
+      _L(9),
+      _F(7)],
+      [_D(7),
+      _B(9),
+      _L(7)],
+      [_D(9),
+      _R(9),
+      _B(7)]],
+      // Edges
+      [[_U(6),
+      _R(2)],
+      [_U(8),
+      _F(2)],
+      [_U(4),
+      _L(2)],
+      [_U(2),
+      _B(2)],
+      [_D(6),
+      _R(8)],
+      [_D(2),
+      _F(8)],
+      [_D(4),
+      _L(8)],
+      [_D(8),
+      _B(8)],
+      [_F(6),
+      _R(4)],
+      [_F(4),
+      _L(6)],
+      [_B(6),
+      _L(4)],
+      [_B(4),
+      _R(6)]]
+    ];
+  })();
+
+  centerColor = ['U', 'R', 'F', 'D', 'L', 'B'];
+
+  cornerColor = [['U', 'R', 'F'], ['U', 'F', 'L'], ['U', 'L', 'B'], ['U', 'B', 'R'], ['D', 'F', 'R'], ['D', 'L', 'F'], ['D', 'B', 'L'], ['D', 'R', 'B']];
+
+  edgeColor = [['U', 'R'], ['U', 'F'], ['U', 'L'], ['U', 'B'], ['D', 'R'], ['D', 'F'], ['D', 'L'], ['D', 'B'], ['F', 'R'], ['F', 'L'], ['B', 'L'], ['B', 'R']];
+
+  Cube = (function() {
+    var faceNames, faceNums, parseAlg;
+
+    class Cube {
+      constructor(other) {
+        var x;
+        if (other != null) {
+          this.init(other);
+        } else {
+          this.identity();
+        }
+        // For moves to avoid allocating new objects each time
+        this.newCenter = (function() {
+          var k, results;
+          results = [];
+          for (x = k = 0; k <= 5; x = ++k) {
+            results.push(0);
+          }
+          return results;
+        })();
+        this.newCp = (function() {
+          var k, results;
+          results = [];
+          for (x = k = 0; k <= 7; x = ++k) {
+            results.push(0);
+          }
+          return results;
+        })();
+        this.newEp = (function() {
+          var k, results;
+          results = [];
+          for (x = k = 0; k <= 11; x = ++k) {
+            results.push(0);
+          }
+          return results;
+        })();
+        this.newCo = (function() {
+          var k, results;
+          results = [];
+          for (x = k = 0; k <= 7; x = ++k) {
+            results.push(0);
+          }
+          return results;
+        })();
+        this.newEo = (function() {
+          var k, results;
+          results = [];
+          for (x = k = 0; k <= 11; x = ++k) {
+            results.push(0);
+          }
+          return results;
+        })();
+      }
+
+      init(state) {
+        this.center = state.center.slice(0);
+        this.co = state.co.slice(0);
+        this.ep = state.ep.slice(0);
+        this.cp = state.cp.slice(0);
+        return this.eo = state.eo.slice(0);
+      }
+
+      identity() {
+        var x;
+        // Initialize to the identity cube
+        this.center = [0, 1, 2, 3, 4, 5];
+        this.cp = [0, 1, 2, 3, 4, 5, 6, 7];
+        this.co = (function() {
+          var k, results;
+          results = [];
+          for (x = k = 0; k <= 7; x = ++k) {
+            results.push(0);
+          }
+          return results;
+        })();
+        this.ep = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+        return this.eo = (function() {
+          var k, results;
+          results = [];
+          for (x = k = 0; k <= 11; x = ++k) {
+            results.push(0);
+          }
+          return results;
+        })();
+      }
+
+      toJSON() {
+        return {
+          center: this.center,
+          cp: this.cp,
+          co: this.co,
+          ep: this.ep,
+          eo: this.eo
+        };
+      }
+
+      asString() {
+        var corner, edge, i, k, l, m, n, o, ori, p, result;
+        result = [];
+        for (i = k = 0; k <= 5; i = ++k) {
+          result[9 * i + 4] = centerColor[this.center[i]];
+        }
+        for (i = l = 0; l <= 7; i = ++l) {
+          corner = this.cp[i];
+          ori = this.co[i];
+          for (n = m = 0; m <= 2; n = ++m) {
+            result[cornerFacelet[i][(n + ori) % 3]] = cornerColor[corner][n];
+          }
+        }
+        for (i = o = 0; o <= 11; i = ++o) {
+          edge = this.ep[i];
+          ori = this.eo[i];
+          for (n = p = 0; p <= 1; n = ++p) {
+            result[edgeFacelet[i][(n + ori) % 2]] = edgeColor[edge][n];
+          }
+        }
+        return result.join('');
+      }
+
+      static fromString(str) {
+        var col1, col2, cube, i, j, k, l, m, o, ori, p, q, r, ref;
+        cube = new Cube;
+        for (i = k = 0; k <= 5; i = ++k) {
+          for (j = l = 0; l <= 5; j = ++l) {
+            if (str[9 * i + 4] === centerColor[j]) {
+              cube.center[i] = j;
+            }
+          }
+        }
+        for (i = m = 0; m <= 7; i = ++m) {
+          for (ori = o = 0; o <= 2; ori = ++o) {
+            if ((ref = str[cornerFacelet[i][ori]]) === 'U' || ref === 'D') {
+              break;
+            }
+          }
+          col1 = str[cornerFacelet[i][(ori + 1) % 3]];
+          col2 = str[cornerFacelet[i][(ori + 2) % 3]];
+          for (j = p = 0; p <= 7; j = ++p) {
+            if (col1 === cornerColor[j][1] && col2 === cornerColor[j][2]) {
+              cube.cp[i] = j;
+              cube.co[i] = ori % 3;
+            }
+          }
+        }
+        for (i = q = 0; q <= 11; i = ++q) {
+          for (j = r = 0; r <= 11; j = ++r) {
+            if (str[edgeFacelet[i][0]] === edgeColor[j][0] && str[edgeFacelet[i][1]] === edgeColor[j][1]) {
+              cube.ep[i] = j;
+              cube.eo[i] = 0;
+              break;
+            }
+            if (str[edgeFacelet[i][0]] === edgeColor[j][1] && str[edgeFacelet[i][1]] === edgeColor[j][0]) {
+              cube.ep[i] = j;
+              cube.eo[i] = 1;
+              break;
+            }
+          }
+        }
+        return cube;
+      }
+
+      clone() {
+        return new Cube(this.toJSON());
+      }
+
+      // A class method returning a new random cube
+      static random() {
+        return new Cube().randomize();
+      }
+
+      isSolved() {
+        var c, cent, clone, e, k, l, m;
+        clone = this.clone();
+        clone.move(clone.upright());
+        for (cent = k = 0; k <= 5; cent = ++k) {
+          if (clone.center[cent] !== cent) {
+            return false;
+          }
+        }
+        for (c = l = 0; l <= 7; c = ++l) {
+          if (clone.cp[c] !== c) {
+            return false;
+          }
+          if (clone.co[c] !== 0) {
+            return false;
+          }
+        }
+        for (e = m = 0; m <= 11; e = ++m) {
+          if (clone.ep[e] !== e) {
+            return false;
+          }
+          if (clone.eo[e] !== 0) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      // Multiply this Cube with another Cube, restricted to centers.
+      centerMultiply(other) {
+        var from, k, to;
+        for (to = k = 0; k <= 5; to = ++k) {
+          from = other.center[to];
+          this.newCenter[to] = this.center[from];
+        }
+        [this.center, this.newCenter] = [this.newCenter, this.center];
+        return this;
+      }
+
+      // Multiply this Cube with another Cube, restricted to corners.
+      cornerMultiply(other) {
+        var from, k, to;
+        for (to = k = 0; k <= 7; to = ++k) {
+          from = other.cp[to];
+          this.newCp[to] = this.cp[from];
+          this.newCo[to] = (this.co[from] + other.co[to]) % 3;
+        }
+        [this.cp, this.newCp] = [this.newCp, this.cp];
+        [this.co, this.newCo] = [this.newCo, this.co];
+        return this;
+      }
+
+      // Multiply this Cube with another Cube, restricted to edges
+      edgeMultiply(other) {
+        var from, k, to;
+        for (to = k = 0; k <= 11; to = ++k) {
+          from = other.ep[to];
+          this.newEp[to] = this.ep[from];
+          this.newEo[to] = (this.eo[from] + other.eo[to]) % 2;
+        }
+        [this.ep, this.newEp] = [this.newEp, this.ep];
+        [this.eo, this.newEo] = [this.newEo, this.eo];
+        return this;
+      }
+
+      // Multiply this cube with another Cube
+      multiply(other) {
+        this.centerMultiply(other);
+        this.cornerMultiply(other);
+        this.edgeMultiply(other);
+        return this;
+      }
+
+      move(arg) {
+        var face, k, l, len, move, power, ref, ref1, x;
+        ref = parseAlg(arg);
+        for (k = 0, len = ref.length; k < len; k++) {
+          move = ref[k];
+          face = move / 3 | 0;
+          power = move % 3;
+          for (x = l = 0, ref1 = power; (0 <= ref1 ? l <= ref1 : l >= ref1); x = 0 <= ref1 ? ++l : --l) {
+            this.multiply(Cube.moves[face]);
+          }
+        }
+        return this;
+      }
+
+      upright() {
+        var clone, i, j, k, l, result;
+        clone = this.clone();
+        result = [];
+        for (i = k = 0; k <= 5; i = ++k) {
+          if (clone.center[i] === F) {
+            break;
+          }
+        }
+        switch (i) {
+          case D:
+            result.push("x");
+            break;
+          case U:
+            result.push("x'");
+            break;
+          case B:
+            result.push("x2");
+            break;
+          case R:
+            result.push("y");
+            break;
+          case L:
+            result.push("y'");
+        }
+        if (result.length) {
+          clone.move(result[0]);
+        }
+        for (j = l = 0; l <= 5; j = ++l) {
+          if (clone.center[j] === U) {
+            break;
+          }
+        }
+        switch (j) {
+          case L:
+            result.push("z");
+            break;
+          case R:
+            result.push("z'");
+            break;
+          case D:
+            result.push("z2");
+        }
+        return result.join(' ');
+      }
+
+      static inverse(arg) {
+        var face, k, len, move, power, result, str;
+        result = (function() {
+          var k, len, ref, results;
+          ref = parseAlg(arg);
+          results = [];
+          for (k = 0, len = ref.length; k < len; k++) {
+            move = ref[k];
+            face = move / 3 | 0;
+            power = move % 3;
+            results.push(face * 3 + -(power - 1) + 1);
+          }
+          return results;
+        })();
+        result.reverse();
+        if (typeof arg === 'string') {
+          str = '';
+          for (k = 0, len = result.length; k < len; k++) {
+            move = result[k];
+            face = move / 3 | 0;
+            power = move % 3;
+            str += faceNames[face];
+            if (power === 1) {
+              str += '2';
+            } else if (power === 2) {
+              str += "'";
+            }
+            str += ' ';
+          }
+          return str.substring(0, str.length - 1);
+        } else if (arg.length != null) {
+          return result;
+        } else {
+          return result[0];
+        }
+      }
+
     };
 
-    const FACE_COLORS = {
-      px: '#db2424', // Right  - Red
-      nx: '#ff861f', // Left   - Orange
-      py: '#ffffff', // Up     - White
-      ny: '#ffd21a', // Down   - Yellow
-      pz: '#1f63ff', // Front  - Blue
-      nz: '#27b45d'  // Back   - Green
+    Cube.prototype.randomize = (function() {
+      var arePermutationsValid, generateValidRandomOrientation, generateValidRandomPermutation, getNumSwaps, isOrientationValid, randint, randomizeOrientation, result, shuffle;
+      randint = function(min, max) {
+        return min + Math.floor(Math.random() * (max - min + 1));
+      };
+      // Fisher-Yates shuffle adapted from https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+      shuffle = function(array) {
+        var currentIndex, randomIndex, temporaryValue;
+        currentIndex = array.length;
+        // While there remain elements to shuffle...
+        while (currentIndex !== 0) {
+          // Pick a remaining element...
+          randomIndex = randint(0, currentIndex - 1);
+          currentIndex -= 1;
+          // And swap it with the current element.
+          temporaryValue = array[currentIndex];
+          [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+      };
+      getNumSwaps = function(arr) {
+        var cur, cycleLength, i, k, numSwaps, ref, seen, x;
+        numSwaps = 0;
+        seen = (function() {
+          var k, ref, results;
+          results = [];
+          for (x = k = 0, ref = arr.length - 1; (0 <= ref ? k <= ref : k >= ref); x = 0 <= ref ? ++k : --k) {
+            results.push(false);
+          }
+          return results;
+        })();
+        while (true) {
+          // We compute the cycle decomposition
+          cur = -1;
+          for (i = k = 0, ref = arr.length - 1; (0 <= ref ? k <= ref : k >= ref); i = 0 <= ref ? ++k : --k) {
+            if (!seen[i]) {
+              cur = i;
+              break;
+            }
+          }
+          if (cur === -1) {
+            break;
+          }
+          cycleLength = 0;
+          while (!seen[cur]) {
+            seen[cur] = true;
+            cycleLength++;
+            cur = arr[cur];
+          }
+          // A cycle is equivalent to cycleLength + 1 swaps
+          numSwaps += cycleLength + 1;
+        }
+        return numSwaps;
+      };
+      arePermutationsValid = function(cp, ep) {
+        var numSwaps;
+        numSwaps = getNumSwaps(ep) + getNumSwaps(cp);
+        return numSwaps % 2 === 0;
+      };
+      generateValidRandomPermutation = function(cp, ep) {
+        // Each shuffle only takes around 12 operations and there's a 50%
+        // chance of a valid permutation so it'll finish in very good time
+        shuffle(ep);
+        shuffle(cp);
+        while (!arePermutationsValid(cp, ep)) {
+          shuffle(ep);
+          shuffle(cp);
+        }
+      };
+      randomizeOrientation = function(arr, numOrientations) {
+        var i, k, ori, ref;
+        ori = 0;
+        for (i = k = 0, ref = arr.length - 1; (0 <= ref ? k <= ref : k >= ref); i = 0 <= ref ? ++k : --k) {
+          ori += (arr[i] = randint(0, numOrientations - 1));
+        }
+      };
+      isOrientationValid = function(arr, numOrientations) {
+        return arr.reduce(function(a, b) {
+          return a + b;
+        }) % numOrientations === 0;
+      };
+      generateValidRandomOrientation = function(co, eo) {
+        // There is a 1/2 and 1/3 probably respectively of each of these
+        // succeeding so the probability of them running 10 times before
+        // success is already only 1% and only gets exponentially lower
+        // and each generation is only in the 10s of operations which is nothing
+        randomizeOrientation(co, 3);
+        while (!isOrientationValid(co, 3)) {
+          randomizeOrientation(co, 3);
+        }
+        randomizeOrientation(eo, 2);
+        while (!isOrientationValid(eo, 2)) {
+          randomizeOrientation(eo, 2);
+        }
+      };
+      result = function() {
+        generateValidRandomPermutation(this.cp, this.ep);
+        generateValidRandomOrientation(this.co, this.eo);
+        return this;
+      };
+      return result;
+    })();
+
+    Cube.moves = [
+      {
+        // U
+        center: [0, 1, 2, 3, 4, 5],
+        cp: [UBR,
+      URF,
+      UFL,
+      ULB,
+      DFR,
+      DLF,
+      DBL,
+      DRB],
+        co: [0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0],
+        ep: [UB,
+      UR,
+      UF,
+      UL,
+      DR,
+      DF,
+      DL,
+      DB,
+      FR,
+      FL,
+      BL,
+      BR],
+        eo: [0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0]
+      },
+      {
+        // R
+        center: [0, 1, 2, 3, 4, 5],
+        cp: [DFR,
+      UFL,
+      ULB,
+      URF,
+      DRB,
+      DLF,
+      DBL,
+      UBR],
+        co: [2,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      2],
+        ep: [FR,
+      UF,
+      UL,
+      UB,
+      BR,
+      DF,
+      DL,
+      DB,
+      DR,
+      FL,
+      BL,
+      UR],
+        eo: [0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0]
+      },
+      {
+        // F
+        center: [0, 1, 2, 3, 4, 5],
+        cp: [UFL,
+      DLF,
+      ULB,
+      UBR,
+      URF,
+      DFR,
+      DBL,
+      DRB],
+        co: [1,
+      2,
+      0,
+      0,
+      2,
+      1,
+      0,
+      0],
+        ep: [UR,
+      FL,
+      UL,
+      UB,
+      DR,
+      FR,
+      DL,
+      DB,
+      UF,
+      DF,
+      BL,
+      BR],
+        eo: [0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0]
+      },
+      {
+        // D
+        center: [0, 1, 2, 3, 4, 5],
+        cp: [URF,
+      UFL,
+      ULB,
+      UBR,
+      DLF,
+      DBL,
+      DRB,
+      DFR],
+        co: [0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0],
+        ep: [UR,
+      UF,
+      UL,
+      UB,
+      DF,
+      DL,
+      DB,
+      DR,
+      FR,
+      FL,
+      BL,
+      BR],
+        eo: [0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0]
+      },
+      {
+        // L
+        center: [0, 1, 2, 3, 4, 5],
+        cp: [URF,
+      ULB,
+      DBL,
+      UBR,
+      DFR,
+      UFL,
+      DLF,
+      DRB],
+        co: [0,
+      1,
+      2,
+      0,
+      0,
+      2,
+      1,
+      0],
+        ep: [UR,
+      UF,
+      BL,
+      UB,
+      DR,
+      DF,
+      FL,
+      DB,
+      FR,
+      UL,
+      DL,
+      BR],
+        eo: [0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0]
+      },
+      {
+        // B
+        center: [0, 1, 2, 3, 4, 5],
+        cp: [URF,
+      UFL,
+      UBR,
+      DRB,
+      DFR,
+      DLF,
+      ULB,
+      DBL],
+        co: [0,
+      0,
+      1,
+      2,
+      0,
+      0,
+      2,
+      1],
+        ep: [UR,
+      UF,
+      UL,
+      BR,
+      DR,
+      DF,
+      DL,
+      BL,
+      FR,
+      FL,
+      UB,
+      DB],
+        eo: [0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      1,
+      1]
+      },
+      {
+        // E
+        center: [U,
+      F,
+      L,
+      D,
+      B,
+      R],
+        cp: [URF,
+      UFL,
+      ULB,
+      UBR,
+      DFR,
+      DLF,
+      DBL,
+      DRB],
+        co: [0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0],
+        ep: [UR,
+      UF,
+      UL,
+      UB,
+      DR,
+      DF,
+      DL,
+      DB,
+      FL,
+      BL,
+      BR,
+      FR],
+        eo: [0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1]
+      },
+      {
+        // M
+        center: [B,
+      R,
+      U,
+      F,
+      L,
+      D],
+        cp: [URF,
+      UFL,
+      ULB,
+      UBR,
+      DFR,
+      DLF,
+      DBL,
+      DRB],
+        co: [0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0],
+        ep: [UR,
+      UB,
+      UL,
+      DB,
+      DR,
+      UF,
+      DL,
+      DF,
+      FR,
+      FL,
+      BL,
+      BR],
+        eo: [0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0]
+      },
+      {
+        // S
+        center: [L,
+      U,
+      F,
+      R,
+      D,
+      B],
+        cp: [URF,
+      UFL,
+      ULB,
+      UBR,
+      DFR,
+      DLF,
+      DBL,
+      DRB],
+        co: [0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0],
+        ep: [UL,
+      UF,
+      DL,
+      UB,
+      UR,
+      DF,
+      DR,
+      DB,
+      FR,
+      FL,
+      BL,
+      BR],
+        eo: [1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0]
+      }
+    ];
+
+    faceNums = {
+      U: 0,
+      R: 1,
+      F: 2,
+      D: 3,
+      L: 4,
+      B: 5,
+      E: 6,
+      M: 7,
+      S: 8,
+      x: 9,
+      y: 10,
+      z: 11,
+      u: 12,
+      r: 13,
+      f: 14,
+      d: 15,
+      l: 16,
+      b: 17
     };
 
-    // ============================================================
-    // Three.js 场景、光影、相机、控制器。
-    // ============================================================
-    const app = document.getElementById('app');
-    const statusEl = document.getElementById('status');
-    const challengeBtn = document.getElementById('challengeBtn');
-    const scrambleBtn = document.getElementById('scrambleBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const soundBtn = document.getElementById('soundBtn');
-    const timerText = document.getElementById('timerText');
-    const bestText = document.getElementById('bestText');
-
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0d14);
-
-    const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(5.2, 4.2, 6.4);
-    camera.lookAt(0, 0, 0);
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.05;
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    app.appendChild(renderer.domElement);
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.08;
-    controls.rotateSpeed = 0.72;
-    controls.enablePan = false;
-    controls.minDistance = 4.2;
-    controls.maxDistance = 12;
-    // 操作分离：左键留给层旋转，右键交给 OrbitControls 旋转视角。
-    controls.mouseButtons = {
-      LEFT: null,
-      MIDDLE: THREE.MOUSE.DOLLY,
-      RIGHT: THREE.MOUSE.ROTATE
+    faceNames = {
+      0: 'U',
+      1: 'R',
+      2: 'F',
+      3: 'D',
+      4: 'L',
+      5: 'B',
+      6: 'E',
+      7: 'M',
+      8: 'S',
+      9: 'x',
+      10: 'y',
+      11: 'z',
+      12: 'u',
+      13: 'r',
+      14: 'f',
+      15: 'd',
+      16: 'l',
+      17: 'b'
     };
 
-    const ambient = new THREE.AmbientLight(0xffffff, 0.58);
-    scene.add(ambient);
-
-    const keyLight = new THREE.DirectionalLight(0xffffff, 3.15);
-    keyLight.position.set(5, 8, 6);
-    keyLight.castShadow = true;
-    keyLight.shadow.mapSize.set(2048, 2048);
-    keyLight.shadow.camera.near = 0.1;
-    keyLight.shadow.camera.far = 25;
-    keyLight.shadow.camera.left = -7;
-    keyLight.shadow.camera.right = 7;
-    keyLight.shadow.camera.top = 7;
-    keyLight.shadow.camera.bottom = -7;
-    keyLight.shadow.bias = -0.0006;
-    scene.add(keyLight);
-
-    const fillLight = new THREE.DirectionalLight(0x8fb7ff, 0.9);
-    fillLight.position.set(-6, 3, -5);
-    scene.add(fillLight);
-
-    const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(18, 18),
-      new THREE.ShadowMaterial({ color: 0x000000, opacity: 0.34 })
-    );
-    floor.rotation.x = -Math.PI / 2;
-    floor.position.y = -2.35;
-    floor.receiveShadow = true;
-    scene.add(floor);
-
-    // ============================================================
-    // Canvas 程序化贴纸纹理：圆角矩形、高光、内阴影，无任何图片依赖。
-    // ============================================================
-    function roundedRect(ctx, x, y, w, h, r) {
-      const rr = Math.min(r, w / 2, h / 2);
-      ctx.beginPath();
-      ctx.moveTo(x + rr, y);
-      ctx.arcTo(x + w, y, x + w, y + h, rr);
-      ctx.arcTo(x + w, y + h, x, y + h, rr);
-      ctx.arcTo(x, y + h, x, y, rr);
-      ctx.arcTo(x, y, x + w, y, rr);
-      ctx.closePath();
-    }
-
-    function shadeColor(hex, t) {
-      const n = parseInt(hex.slice(1), 16);
-      let r = (n >> 16) & 255;
-      let g = (n >> 8) & 255;
-      let b = n & 255;
-      if (t >= 0) {
-        r = Math.round(r + (255 - r) * t);
-        g = Math.round(g + (255 - g) * t);
-        b = Math.round(b + (255 - b) * t);
+    parseAlg = function(arg) {
+      var k, len, move, part, power, ref, results;
+      if (typeof arg === 'string') {
+        ref = arg.split(/\s+/);
+        // String
+        results = [];
+        for (k = 0, len = ref.length; k < len; k++) {
+          part = ref[k];
+          if (part.length === 0) {
+            // First and last can be empty
+            continue;
+          }
+          if (part.length > 2) {
+            throw new Error(`Invalid move: ${part}`);
+          }
+          move = faceNums[part[0]];
+          if (move === void 0) {
+            throw new Error(`Invalid move: ${part}`);
+          }
+          if (part.length === 1) {
+            power = 0;
+          } else {
+            if (part[1] === '2') {
+              power = 1;
+            } else if (part[1] === "'") {
+              power = 2;
+            } else {
+              throw new Error(`Invalid move: ${part}`);
+            }
+          }
+          results.push(move * 3 + power);
+        }
+        return results;
+      } else if (arg.length != null) {
+        // Already an array
+        return arg;
       } else {
-        r = Math.round(r * (1 + t));
-        g = Math.round(g * (1 + t));
-        b = Math.round(b * (1 + t));
+        // A single move
+        return [arg];
       }
-      return `rgb(${r}, ${g}, ${b})`;
+    };
+
+    // x
+    Cube.moves.push(new Cube().move("R M' L'").toJSON());
+
+    // y
+    Cube.moves.push(new Cube().move("U E' D'").toJSON());
+
+    // z
+    Cube.moves.push(new Cube().move("F S B'").toJSON());
+
+    // u
+    Cube.moves.push(new Cube().move("U E'").toJSON());
+
+    // r
+    Cube.moves.push(new Cube().move("R M'").toJSON());
+
+    // f
+    Cube.moves.push(new Cube().move("F S").toJSON());
+
+    // d
+    Cube.moves.push(new Cube().move("D E").toJSON());
+
+    // l
+    Cube.moves.push(new Cube().move("L M").toJSON());
+
+    // b
+    Cube.moves.push(new Cube().move("B S'").toJSON());
+
+    return Cube;
+
+  }).call(this);
+
+  //# Globals
+  if (typeof module !== "undefined" && module !== null) {
+    module.exports = Cube;
+  } else {
+    this.Cube = Cube;
+  }
+
+}).call(this);
+
+(function() {
+  var B, BL, BR, Cnk, Cube, D, DB, DBL, DF, DFR, DL, DLF, DR, DRB, F, FL, FR, Include, L, N_FLIP, N_FRtoBR, N_PARITY, N_SLICE1, N_SLICE2, N_TWIST, N_UBtoDF, N_URFtoDLF, N_URtoDF, N_URtoUL, R, U, UB, UBR, UF, UFL, UL, ULB, UR, URF, allMoves1, allMoves2, computeMoveTable, computePruningTable, faceNames, faceNums, factorial, key, max, mergeURtoDF, moveTableParams, nextMoves1, nextMoves2, permutationIndex, pruning, pruningTableParams, rotateLeft, rotateRight, value,
+    indexOf = [].indexOf;
+
+  Cube = this.Cube || require('./cube');
+
+  // Centers
+  [U, R, F, D, L, B] = [0, 1, 2, 3, 4, 5];
+
+  // Corners
+  [URF, UFL, ULB, UBR, DFR, DLF, DBL, DRB] = [0, 1, 2, 3, 4, 5, 6, 7];
+
+  // Edges
+  [UR, UF, UL, UB, DR, DF, DL, DB, FR, FL, BL, BR] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+  //# Helpers
+
+  // n choose k, i.e. the binomial coeffiecient
+  Cnk = function(n, k) {
+    var i, j, s;
+    if (n < k) {
+      return 0;
     }
-
-    const textureCache = new Map();
-    function makeStickerTexture(hex) {
-      if (textureCache.has(hex)) return textureCache.get(hex);
-
-      const canvas = document.createElement('canvas');
-      canvas.width = 256;
-      canvas.height = 256;
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, 256, 256);
-
-      // 黑色软阴影像真实塑料边框里嵌入的贴纸。
-      ctx.save();
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.55)';
-      ctx.shadowBlur = 16;
-      ctx.shadowOffsetY = 7;
-      roundedRect(ctx, 22, 20, 212, 212, 34);
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.42)';
-      ctx.fill();
-      ctx.restore();
-
-      // 贴纸主体渐变，模拟轻微塑料反光。
-      const grad = ctx.createLinearGradient(34, 28, 224, 232);
-      grad.addColorStop(0.00, shadeColor(hex, 0.36));
-      grad.addColorStop(0.45, hex);
-      grad.addColorStop(1.00, shadeColor(hex, -0.20));
-      roundedRect(ctx, 30, 28, 196, 196, 30);
-      ctx.fillStyle = grad;
-      ctx.fill();
-
-      // 高光层。
-      const shine = ctx.createRadialGradient(72, 56, 6, 72, 56, 138);
-      shine.addColorStop(0, 'rgba(255, 255, 255, 0.55)');
-      shine.addColorStop(0.38, 'rgba(255, 255, 255, 0.13)');
-      shine.addColorStop(1, 'rgba(255, 255, 255, 0)');
-      roundedRect(ctx, 30, 28, 196, 196, 30);
-      ctx.fillStyle = shine;
-      ctx.fill();
-
-      // 细边框提升真实感。
-      roundedRect(ctx, 34, 32, 188, 188, 26);
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
-      ctx.stroke();
-      roundedRect(ctx, 31, 29, 194, 194, 30);
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = 'rgba(0, 0, 0, 0.18)';
-      ctx.stroke();
-
-      const texture = new THREE.CanvasTexture(canvas);
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
-      texture.needsUpdate = true;
-      textureCache.set(hex, texture);
-      return texture;
+    if (k > n / 2) {
+      k = n - k;
     }
-
-    const bodyGeometry = new THREE.BoxGeometry(CUBIE_SIZE, CUBIE_SIZE, CUBIE_SIZE);
-    const stickerGeometry = new THREE.PlaneGeometry(STICKER_SIZE, STICKER_SIZE);
-    const bodyMaterial = new THREE.MeshStandardMaterial({
-      color: 0x101217,
-      roughness: 0.45,
-      metalness: 0.0
-    });
-
-    const stickerMaterials = new Map();
-    function getStickerMaterial(faceKey) {
-      const hex = FACE_COLORS[faceKey];
-      if (stickerMaterials.has(hex)) return stickerMaterials.get(hex);
-      const mat = new THREE.MeshStandardMaterial({
-        map: makeStickerTexture(hex),
-        roughness: 0.33,
-        metalness: 0.0,
-        transparent: true,
-        side: THREE.DoubleSide
-      });
-      stickerMaterials.set(hex, mat);
-      return mat;
+    s = 1;
+    i = n;
+    j = 1;
+    while (i !== n - k) {
+      s *= i;
+      s /= j;
+      i--;
+      j++;
     }
+    return s;
+  };
 
-    let cubies = [];
-    let activePivot = null;
-    let activeLayer = [];
-    let drag = null;
-    let busy = false;
-    let challengeActive = false;
-    let challengeStart = 0;
-    let lastChallengeTime = 0;
-    let bestChallengeTime = Number(localStorage.getItem('rubiksBestTime') || 0);
-    let soundEnabled = localStorage.getItem('rubiksSound') !== 'off';
-    let audioCtx = null;
-
-    function formatTime(ms) {
-      const totalCentiseconds = Math.max(0, Math.floor(ms / 10));
-      const centiseconds = totalCentiseconds % 100;
-      const totalSeconds = Math.floor(totalCentiseconds / 100);
-      const seconds = totalSeconds % 60;
-      const minutes = Math.floor(totalSeconds / 60);
-      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(centiseconds).padStart(2, '0')}`;
+  // n!
+  factorial = function(n) {
+    var f, i, m, ref;
+    f = 1;
+    for (i = m = 2, ref = n; (2 <= ref ? m <= ref : m >= ref); i = 2 <= ref ? ++m : --m) {
+      f *= i;
     }
+    return f;
+  };
 
-    function updateTimerReadout() {
-      const elapsed = challengeActive ? performance.now() - challengeStart : lastChallengeTime;
-      timerText.textContent = formatTime(elapsed);
-      bestText.textContent = bestChallengeTime ? formatTime(bestChallengeTime) : '--:--.--';
+  // Maximum of two values
+  max = function(a, b) {
+    if (a > b) {
+      return a;
+    } else {
+      return b;
     }
+  };
 
-    function setButtonsDisabled(disabled) {
-      challengeBtn.disabled = disabled;
-      scrambleBtn.disabled = disabled;
-      resetBtn.disabled = disabled;
-      soundBtn.disabled = disabled;
+  // Rotate elements between l and r left by one place
+  rotateLeft = function(array, l, r) {
+    var i, m, ref, ref1, tmp;
+    tmp = array[l];
+    for (i = m = ref = l, ref1 = r - 1; (ref <= ref1 ? m <= ref1 : m >= ref1); i = ref <= ref1 ? ++m : --m) {
+      array[i] = array[i + 1];
     }
+    return array[r] = tmp;
+  };
 
-    function updateSoundButton() {
-      soundBtn.textContent = soundEnabled ? 'Sound On' : 'Sound Off';
-      soundBtn.setAttribute('aria-pressed', String(soundEnabled));
+  // Rotate elements between l and r right by one place
+  rotateRight = function(array, l, r) {
+    var i, m, ref, ref1, tmp;
+    tmp = array[r];
+    for (i = m = ref = r, ref1 = l + 1; (ref <= ref1 ? m <= ref1 : m >= ref1); i = ref <= ref1 ? ++m : --m) {
+      array[i] = array[i - 1];
     }
+    return array[l] = tmp;
+  };
 
-    function ensureAudioContext() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      return audioCtx;
+  // Generate a function that computes permutation indices.
+
+  // The permutation index actually encodes two indices: Combination,
+  // i.e. positions of the cubies start..end (A) and their respective
+  // permutation (B). The maximum value for B is
+
+  //   maxB = (end - start + 1)!
+
+  // and the index is A * maxB + B
+  permutationIndex = function(context, start, end, fromEnd = false) {
+    var i, maxAll, maxB, maxOur, our, permName;
+    maxOur = end - start;
+    maxB = factorial(maxOur + 1);
+    if (context === 'corners') {
+      maxAll = 7;
+      permName = 'cp';
+    } else {
+      maxAll = 11;
+      permName = 'ep';
     }
-
-    function playTurnSound(strength = 1) {
-      if (!soundEnabled) return;
-      const ctx = ensureAudioContext();
-      const now = ctx.currentTime;
-      const duration = 0.055;
-
-      const noiseBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * duration), ctx.sampleRate);
-      const samples = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < samples.length; i++) {
-        const fade = 1 - i / samples.length;
-        samples[i] = (Math.random() * 2 - 1) * fade;
+    our = (function() {
+      var m, ref, results;
+      results = [];
+      for (i = m = 0, ref = maxOur; (0 <= ref ? m <= ref : m >= ref); i = 0 <= ref ? ++m : --m) {
+        results.push(0);
       }
-
-      const noise = ctx.createBufferSource();
-      const noiseGain = ctx.createGain();
-      const filter = ctx.createBiquadFilter();
-      noise.buffer = noiseBuffer;
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(1300 + Math.random() * 420, now);
-      filter.Q.setValueAtTime(7, now);
-      noiseGain.gain.setValueAtTime(0.0001, now);
-      noiseGain.gain.exponentialRampToValueAtTime(0.11 * strength, now + 0.004);
-      noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-
-      const knock = ctx.createOscillator();
-      const knockGain = ctx.createGain();
-      knock.type = 'square';
-      knock.frequency.setValueAtTime(92 + Math.random() * 16, now);
-      knock.frequency.exponentialRampToValueAtTime(58 + Math.random() * 8, now + 0.045);
-      knockGain.gain.setValueAtTime(0.0001, now);
-      knockGain.gain.exponentialRampToValueAtTime(0.035 * strength, now + 0.003);
-      knockGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.052);
-
-      noise.connect(filter).connect(noiseGain).connect(ctx.destination);
-      knock.connect(knockGain).connect(ctx.destination);
-      noise.start(now);
-      noise.stop(now + duration);
-      knock.start(now);
-      knock.stop(now + 0.06);
-    }
-
-    updateSoundButton();
-    updateTimerReadout();
-
-    function addSticker(group, faceKey) {
-      const sticker = new THREE.Mesh(stickerGeometry, getStickerMaterial(faceKey));
-      sticker.castShadow = false;
-      sticker.receiveShadow = true;
-      sticker.userData.cubie = group;
-      sticker.userData.faceKey = faceKey;
-      sticker.renderOrder = 2;
-
-      switch (faceKey) {
-        case 'px':
-          sticker.position.x = STICKER_OFFSET;
-          sticker.rotation.y = Math.PI / 2;
-          break;
-        case 'nx':
-          sticker.position.x = -STICKER_OFFSET;
-          sticker.rotation.y = -Math.PI / 2;
-          break;
-        case 'py':
-          sticker.position.y = STICKER_OFFSET;
-          sticker.rotation.x = -Math.PI / 2;
-          break;
-        case 'ny':
-          sticker.position.y = -STICKER_OFFSET;
-          sticker.rotation.x = Math.PI / 2;
-          break;
-        case 'pz':
-          sticker.position.z = STICKER_OFFSET;
-          break;
-        case 'nz':
-          sticker.position.z = -STICKER_OFFSET;
-          sticker.rotation.y = Math.PI;
-          break;
+      return results;
+    })();
+    return function(index) {
+      var a, b, c, j, k, m, o, p, perm, q, ref, ref1, ref10, ref2, ref3, ref4, ref5, ref6, ref7, ref8, ref9, t, u, w, x, y, z;
+      if (index != null) {
+        for (i = m = 0, ref = maxOur; (0 <= ref ? m <= ref : m >= ref); i = 0 <= ref ? ++m : --m) {
+          // Reset our to [start..end]
+          our[i] = i + start;
+        }
+        b = index % maxB; // permutation
+        a = index / maxB | 0; // combination
+        
+        // Invalidate all edges
+        perm = this[permName];
+        for (i = o = 0, ref1 = maxAll; (0 <= ref1 ? o <= ref1 : o >= ref1); i = 0 <= ref1 ? ++o : --o) {
+          perm[i] = -1;
+        }
+// Generate permutation from index b
+        for (j = p = 1, ref2 = maxOur; (1 <= ref2 ? p <= ref2 : p >= ref2); j = 1 <= ref2 ? ++p : --p) {
+          k = b % (j + 1);
+          b = b / (j + 1) | 0;
+          // TODO: Implement rotateRightBy(our, 0, j, k)
+          while (k > 0) {
+            rotateRight(our, 0, j);
+            k--;
+          }
+        }
+        // Generate combination and set our edges
+        x = maxOur;
+        if (fromEnd) {
+          for (j = q = 0, ref3 = maxAll; (0 <= ref3 ? q <= ref3 : q >= ref3); j = 0 <= ref3 ? ++q : --q) {
+            c = Cnk(maxAll - j, x + 1);
+            if (a - c >= 0) {
+              perm[j] = our[maxOur - x];
+              a -= c;
+              x--;
+            }
+          }
+        } else {
+          for (j = t = ref4 = maxAll; (ref4 <= 0 ? t <= 0 : t >= 0); j = ref4 <= 0 ? ++t : --t) {
+            c = Cnk(j, x + 1);
+            if (a - c >= 0) {
+              perm[j] = our[x];
+              a -= c;
+              x--;
+            }
+          }
+        }
+        return this;
+      } else {
+        perm = this[permName];
+        for (i = u = 0, ref5 = maxOur; (0 <= ref5 ? u <= ref5 : u >= ref5); i = 0 <= ref5 ? ++u : --u) {
+          our[i] = -1;
+        }
+        a = b = x = 0;
+        // Compute the index a < ((maxAll + 1) choose (maxOur + 1)) and
+        // the permutation
+        if (fromEnd) {
+          for (j = w = ref6 = maxAll; (ref6 <= 0 ? w <= 0 : w >= 0); j = ref6 <= 0 ? ++w : --w) {
+            if ((start <= (ref7 = perm[j]) && ref7 <= end)) {
+              a += Cnk(maxAll - j, x + 1);
+              our[maxOur - x] = perm[j];
+              x++;
+            }
+          }
+        } else {
+          for (j = y = 0, ref8 = maxAll; (0 <= ref8 ? y <= ref8 : y >= ref8); j = 0 <= ref8 ? ++y : --y) {
+            if ((start <= (ref9 = perm[j]) && ref9 <= end)) {
+              a += Cnk(j, x + 1);
+              our[x] = perm[j];
+              x++;
+            }
+          }
+        }
+// Compute the index b < (maxOur + 1)! for the permutation
+        for (j = z = ref10 = maxOur; (ref10 <= 0 ? z <= 0 : z >= 0); j = ref10 <= 0 ? ++z : --z) {
+          k = 0;
+          while (our[j] !== start + j) {
+            rotateLeft(our, 0, j);
+            k++;
+          }
+          b = (j + 1) * b + k;
+        }
+        return a * maxB + b;
       }
-      group.add(sticker);
-    }
+    };
+  };
 
-    function createCubie(ix, iy, iz) {
-      const group = new THREE.Group();
-      group.name = `cubie_${ix}_${iy}_${iz}`;
-      group.userData.isCubie = true;
-      group.position.set(ix * STEP, iy * STEP, iz * STEP);
-
-      const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-      body.castShadow = true;
-      body.receiveShadow = true;
-      body.userData.cubie = group;
-      group.add(body);
-
-      if (ix === 1) addSticker(group, 'px');
-      if (ix === -1) addSticker(group, 'nx');
-      if (iy === 1) addSticker(group, 'py');
-      if (iy === -1) addSticker(group, 'ny');
-      if (iz === 1) addSticker(group, 'pz');
-      if (iz === -1) addSticker(group, 'nz');
-
-      scene.add(group);
-      cubies.push(group);
-    }
-
-    function buildCube() {
-      cubies.forEach(c => scene.remove(c));
-      cubies = [];
-      for (let x = -1; x <= 1; x++) {
-        for (let y = -1; y <= 1; y++) {
-          for (let z = -1; z <= 1; z++) {
-            createCubie(x, y, z);
+  Include = {
+    // The twist of the 8 corners, 0 <= twist < 3^7. The orientation of
+    // the DRB corner is fully determined by the orientation of the other
+    // corners.
+    twist: function(twist) {
+      var i, m, o, ori, parity, v;
+      if (twist != null) {
+        parity = 0;
+        for (i = m = 6; m >= 0; i = --m) {
+          ori = twist % 3;
+          twist = (twist / 3) | 0;
+          this.co[i] = ori;
+          parity += ori;
+        }
+        this.co[7] = (3 - parity % 3) % 3;
+        return this;
+      } else {
+        v = 0;
+        for (i = o = 0; o <= 6; i = ++o) {
+          v = 3 * v + this.co[i];
+        }
+        return v;
+      }
+    },
+    // The flip of the 12 edges, 0 <= flip < 2^11. The orientation of the
+    // BR edge is fully determined by the orientation of the other edges.
+    flip: function(flip) {
+      var i, m, o, ori, parity, v;
+      if (flip != null) {
+        parity = 0;
+        for (i = m = 10; m >= 0; i = --m) {
+          ori = flip % 2;
+          flip = flip / 2 | 0;
+          this.eo[i] = ori;
+          parity += ori;
+        }
+        this.eo[11] = (2 - parity % 2) % 2;
+        return this;
+      } else {
+        v = 0;
+        for (i = o = 0; o <= 10; i = ++o) {
+          v = 2 * v + this.eo[i];
+        }
+        return v;
+      }
+    },
+    // Parity of the corner permutation
+    cornerParity: function() {
+      var i, j, m, o, ref, ref1, ref2, ref3, s;
+      s = 0;
+      for (i = m = ref = DRB, ref1 = URF + 1; (ref <= ref1 ? m <= ref1 : m >= ref1); i = ref <= ref1 ? ++m : --m) {
+        for (j = o = ref2 = i - 1, ref3 = URF; (ref2 <= ref3 ? o <= ref3 : o >= ref3); j = ref2 <= ref3 ? ++o : --o) {
+          if (this.cp[j] > this.cp[i]) {
+            s++;
           }
         }
       }
-      scene.updateMatrixWorld(true);
+      return s % 2;
+    },
+    // Parity of the edges permutation. Parity of corners and edges are
+    // the same if the cube is solvable.
+    edgeParity: function() {
+      var i, j, m, o, ref, ref1, ref2, ref3, s;
+      s = 0;
+      for (i = m = ref = BR, ref1 = UR + 1; (ref <= ref1 ? m <= ref1 : m >= ref1); i = ref <= ref1 ? ++m : --m) {
+        for (j = o = ref2 = i - 1, ref3 = UR; (ref2 <= ref3 ? o <= ref3 : o >= ref3); j = ref2 <= ref3 ? ++o : --o) {
+          if (this.ep[j] > this.ep[i]) {
+            s++;
+          }
+        }
+      }
+      return s % 2;
+    },
+    // Permutation of the six corners URF, UFL, ULB, UBR, DFR, DLF
+    URFtoDLF: permutationIndex('corners', URF, DLF),
+    // Permutation of the three edges UR, UF, UL
+    URtoUL: permutationIndex('edges', UR, UL),
+    // Permutation of the three edges UB, DR, DF
+    UBtoDF: permutationIndex('edges', UB, DF),
+    // Permutation of the six edges UR, UF, UL, UB, DR, DF
+    URtoDF: permutationIndex('edges', UR, DF),
+    // Permutation of the equator slice edges FR, FL, BL and BR
+    FRtoBR: permutationIndex('edges', FR, BR, true)
+  };
+
+  for (key in Include) {
+    value = Include[key];
+    Cube.prototype[key] = value;
+  }
+
+  computeMoveTable = function(context, coord, size) {
+    var apply, cube, i, inner, j, k, m, move, o, p, ref, results;
+    // Loop through all valid values for the coordinate, setting cube's
+    // state in each iteration. Then apply each of the 18 moves to the
+    // cube, and compute the resulting coordinate.
+    apply = context === 'corners' ? 'cornerMultiply' : 'edgeMultiply';
+    cube = new Cube;
+    results = [];
+    for (i = m = 0, ref = size - 1; (0 <= ref ? m <= ref : m >= ref); i = 0 <= ref ? ++m : --m) {
+      cube[coord](i);
+      inner = [];
+      for (j = o = 0; o <= 5; j = ++o) {
+        move = Cube.moves[j];
+        for (k = p = 0; p <= 2; k = ++p) {
+          cube[apply](move);
+          inner.push(cube[coord]());
+        }
+        // 4th face turn restores the cube
+        cube[apply](move);
+      }
+      results.push(inner);
     }
+    return results;
+  };
 
-    buildCube();
+  // Because we only have the phase 2 URtoDF coordinates, we need to
+  // merge the URtoUL and UBtoDF coordinates to URtoDF in the beginning
+  // of phase 2.
+  mergeURtoDF = (function() {
+    var a, b;
+    a = new Cube;
+    b = new Cube;
+    return function(URtoUL, UBtoDF) {
+      var i, m;
+      // Collisions can be found because unset are set to -1
+      a.URtoUL(URtoUL);
+      b.UBtoDF(UBtoDF);
+      for (i = m = 0; m <= 7; i = ++m) {
+        if (a.ep[i] !== -1) {
+          if (b.ep[i] !== -1) {
+            return -1; // collision
+          } else {
+            b.ep[i] = a.ep[i];
+          }
+        }
+      }
+      return b.URtoDF();
+    };
+  })();
 
-    // ============================================================
-    // 坐标清洗：旋转结束后将位置归位到 STEP 网格，将姿态归位到 90° 倍数。
-    // 这一步用 Math.round 消除浮点误差，防止多次旋转后魔方“散架”。
-    // ============================================================
-    function snapToGrid(v) {
-      const snapped = Math.round(v / STEP) * STEP;
-      return Math.abs(snapped) < 1e-8 ? 0 : snapped;
+  N_TWIST = 2187; // 3^7 corner orientations
+
+  N_FLIP = 2048; // 2^11 possible edge flips
+
+  N_PARITY = 2; // 2 possible parities
+
+  N_FRtoBR = 11880; // 12!/(12-4)! permutations of FR..BR edges
+
+  N_SLICE1 = 495; // (12 choose 4) possible positions of FR..BR edges
+
+  N_SLICE2 = 24; // 4! permutations of FR..BR edges in phase 2
+
+  N_URFtoDLF = 20160; // 8!/(8-6)! permutations of URF..DLF corners
+
+  
+  // The URtoDF move table is only computed for phase 2 because the full
+  // table would have >650000 entries
+  N_URtoDF = 20160; // 8!/(8-6)! permutation of UR..DF edges in phase 2
+
+  N_URtoUL = 1320; // 12!/(12-3)! permutations of UR..UL edges
+
+  N_UBtoDF = 1320; // 12!/(12-3)! permutations of UB..DF edges
+
+  
+  // The move table for parity is so small that it's included here
+  Cube.moveTables = {
+    parity: [[1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1], [0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0]],
+    twist: null,
+    flip: null,
+    FRtoBR: null,
+    URFtoDLF: null,
+    URtoDF: null,
+    URtoUL: null,
+    UBtoDF: null,
+    mergeURtoDF: null
+  };
+
+  // Other move tables are computed on the fly
+  moveTableParams = {
+    // name: [scope, size]
+    twist: ['corners', N_TWIST],
+    flip: ['edges', N_FLIP],
+    FRtoBR: ['edges', N_FRtoBR],
+    URFtoDLF: ['corners', N_URFtoDLF],
+    URtoDF: ['edges', N_URtoDF],
+    URtoUL: ['edges', N_URtoUL],
+    UBtoDF: ['edges', N_UBtoDF],
+    mergeURtoDF: []
+  };
+
+  Cube.computeMoveTables = function(...tables) {
+    var len, m, name, scope, size, tableName;
+    if (tables.length === 0) {
+      tables = (function() {
+        var results;
+        results = [];
+        for (name in moveTableParams) {
+          results.push(name);
+        }
+        return results;
+      })();
     }
-
-    function snapAngle(a) {
-      const twoPi = Math.PI * 2;
-      let snapped = Math.round(a / HALF_PI) * HALF_PI;
-      snapped = ((snapped + Math.PI) % twoPi + twoPi) % twoPi - Math.PI;
-      return Math.abs(snapped) < 1e-8 ? 0 : snapped;
+    for (m = 0, len = tables.length; m < len; m++) {
+      tableName = tables[m];
+      if (this.moveTables[tableName] !== null) {
+        // Already computed
+        continue;
+      }
+      if (tableName === 'mergeURtoDF') {
+        this.moveTables.mergeURtoDF = (function() {
+          var UBtoDF, URtoUL, o, results;
+          results = [];
+          for (URtoUL = o = 0; o <= 335; URtoUL = ++o) {
+            results.push((function() {
+              var p, results1;
+              results1 = [];
+              for (UBtoDF = p = 0; p <= 335; UBtoDF = ++p) {
+                results1.push(mergeURtoDF(URtoUL, UBtoDF));
+              }
+              return results1;
+            })());
+          }
+          return results;
+        })();
+      } else {
+        [scope, size] = moveTableParams[tableName];
+        this.moveTables[tableName] = computeMoveTable(scope, tableName, size);
+      }
     }
+    return this;
+  };
 
-    function cleanupCubies() {
-      cubies.forEach(cubie => {
-        cubie.position.set(
-          snapToGrid(cubie.position.x),
-          snapToGrid(cubie.position.y),
-          snapToGrid(cubie.position.z)
-        );
-        cubie.rotation.set(
-          snapAngle(cubie.rotation.x),
-          snapAngle(cubie.rotation.y),
-          snapAngle(cubie.rotation.z)
-        );
-        cubie.updateMatrix();
-        cubie.updateMatrixWorld(true);
-      });
+  // Phase 1: All moves are valid
+  allMoves1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+
+  // The list of next valid phase 1 moves when the given face was turned
+  // in the last move
+  nextMoves1 = (function() {
+    var face, lastFace, m, next, o, p, power, results;
+    results = [];
+    for (lastFace = m = 0; m <= 5; lastFace = ++m) {
+      next = [];
+// Don't allow commuting moves, e.g. U U'. Also make sure that
+// opposite faces are always moved in the same order, i.e. allow
+// U D but no D U. This avoids sequences like U D U'.
+      for (face = o = 0; o <= 5; face = ++o) {
+        if (face !== lastFace && face !== lastFace - 3) {
+// single, double or inverse move
+          for (power = p = 0; p <= 2; power = ++p) {
+            next.push(face * 3 + power);
+          }
+        }
+      }
+      results.push(next);
     }
+    return results;
+  })();
 
-    // ============================================================
-    // 动态层级筛选：不维护 3D 状态数组，不写死 cubie 索引。
-    // 每次旋转时遍历所有 cubie，根据世界坐标在某轴上的值是否接近 layerCoord 来决定是否属于该层。
-    // ============================================================
-    function getLayerCubies(axisName, layerCoord) {
-      const p = new THREE.Vector3();
-      return cubies.filter(cubie => {
-        cubie.getWorldPosition(p);
-        return Math.abs(p[axisName] - layerCoord) < EPSILON;
-      });
+  // Phase 2: Double moves of all faces plus quarter moves of U and D
+  allMoves2 = [0, 1, 2, 4, 7, 9, 10, 11, 13, 16];
+
+  nextMoves2 = (function() {
+    var face, lastFace, len, m, next, o, p, power, powers, results;
+    results = [];
+    for (lastFace = m = 0; m <= 5; lastFace = ++m) {
+      next = [];
+      for (face = o = 0; o <= 5; face = ++o) {
+        if (!(face !== lastFace && face !== lastFace - 3)) {
+          continue;
+        }
+        // Allow all moves of U and D and double moves of others
+        powers = face === 0 || face === 3 ? [0, 1, 2] : [1];
+        for (p = 0, len = powers.length; p < len; p++) {
+          power = powers[p];
+          next.push(face * 3 + power);
+        }
+      }
+      results.push(next);
     }
+    return results;
+  })();
 
-    function setPivotAngle(axisName, angle) {
-      if (!activePivot) return;
-      activePivot.rotation.set(0, 0, 0);
-      activePivot.rotation[axisName] = angle;
-      activePivot.updateMatrixWorld(true);
+  // 8 values are encoded in one number
+  pruning = function(table, index, value) {
+    var pos, shift, slot;
+    pos = index % 8;
+    slot = index >> 3;
+    shift = pos << 2;
+    if (value != null) {
+      // Set
+      table[slot] &= ~(0xF << shift);
+      table[slot] |= value << shift;
+      return value;
+    } else {
+      // Get
+      return (table[slot] & (0xF << shift)) >>> shift;
     }
+  };
 
-    // ============================================================
-    // Pivot 挂载逻辑：
-    // 1. 创建临时 Object3D 作为轴心 pivot。
-    // 2. pivot.attach(cubie) 把当前层小方块挂到轴心上。
-    // 3. 动画中只旋转 pivot。
-    // 4. 结束后 scene.attach(cubie) 放回场景。
-    // attach 会自动保持世界矩阵，避免手写四元数/矩阵乘法。
-    // ============================================================
-    function beginPivot(axisName, layerCoord) {
-      if (activePivot) return false;
-      activePivot = new THREE.Object3D();
-      activePivot.name = 'temporary_rotation_pivot';
-      scene.add(activePivot);
-      activePivot.updateMatrixWorld(true);
-
-      activeLayer = getLayerCubies(axisName, layerCoord);
-      activeLayer.forEach(cubie => activePivot.attach(cubie));
-      return activeLayer.length > 0;
+  computePruningTable = function(phase, size, currentCoords, nextIndex) {
+    var current, depth, done, index, len, m, move, moves, next, o, ref, table, x;
+    // Initialize all values to 0xF
+    table = (function() {
+      var m, ref, results;
+      results = [];
+      for (x = m = 0, ref = Math.ceil(size / 8) - 1; (0 <= ref ? m <= ref : m >= ref); x = 0 <= ref ? ++m : --m) {
+        results.push(0xFFFFFFFF);
+      }
+      return results;
+    })();
+    if (phase === 1) {
+      moves = allMoves1;
+    } else {
+      moves = allMoves2;
     }
-
-    function finishPivot() {
-      if (!activePivot) return;
-      activePivot.updateMatrixWorld(true);
-      activeLayer.forEach(cubie => scene.attach(cubie));
-      scene.remove(activePivot);
-      activePivot = null;
-      activeLayer = [];
-      cleanupCubies();
-      scene.updateMatrixWorld(true);
+    depth = 0;
+    pruning(table, 0, depth);
+    done = 1;
+    // In each iteration, take each state found in the previous depth and
+    // compute the next state. Stop when all states have been assigned a
+    // depth.
+    while (done !== size) {
+      for (index = m = 0, ref = size - 1; (0 <= ref ? m <= ref : m >= ref); index = 0 <= ref ? ++m : --m) {
+        if (!(pruning(table, index) === depth)) {
+          continue;
+        }
+        current = currentCoords(index);
+        for (o = 0, len = moves.length; o < len; o++) {
+          move = moves[o];
+          next = nextIndex(current, move);
+          if (pruning(table, next) === 0xF) {
+            pruning(table, next, depth + 1);
+            done++;
+          }
+        }
+      }
+      depth++;
     }
+    return table;
+  };
 
-    function animateLayerTurn(axisName, layerCoord, targetAngle, duration = 180) {
-      return new Promise(resolve => {
-        if (!beginPivot(axisName, layerCoord)) {
-          finishPivot();
-          resolve();
+  Cube.pruningTables = {
+    sliceTwist: null,
+    sliceFlip: null,
+    sliceURFtoDLFParity: null,
+    sliceURtoDFParity: null
+  };
+
+  pruningTableParams = {
+    // name: [phase, size, currentCoords, nextIndex]
+    sliceTwist: [
+      1,
+      N_SLICE1 * N_TWIST,
+      function(index) {
+        return [index % N_SLICE1,
+      index / N_SLICE1 | 0];
+      },
+      function(current,
+      move) {
+        var newSlice,
+      newTwist,
+      slice,
+      twist;
+        [slice,
+      twist] = current;
+        newSlice = Cube.moveTables.FRtoBR[slice * 24][move] / 24 | 0;
+        newTwist = Cube.moveTables.twist[twist][move];
+        return newTwist * N_SLICE1 + newSlice;
+      }
+    ],
+    sliceFlip: [
+      1,
+      N_SLICE1 * N_FLIP,
+      function(index) {
+        return [index % N_SLICE1,
+      index / N_SLICE1 | 0];
+      },
+      function(current,
+      move) {
+        var flip,
+      newFlip,
+      newSlice,
+      slice;
+        [slice,
+      flip] = current;
+        newSlice = Cube.moveTables.FRtoBR[slice * 24][move] / 24 | 0;
+        newFlip = Cube.moveTables.flip[flip][move];
+        return newFlip * N_SLICE1 + newSlice;
+      }
+    ],
+    sliceURFtoDLFParity: [
+      2,
+      N_SLICE2 * N_URFtoDLF * N_PARITY,
+      function(index) {
+        return [index % 2,
+      (index / 2 | 0) % N_SLICE2,
+      (index / 2 | 0) / N_SLICE2 | 0];
+      },
+      function(current,
+      move) {
+        var URFtoDLF,
+      newParity,
+      newSlice,
+      newURFtoDLF,
+      parity,
+      slice;
+        [parity,
+      slice,
+      URFtoDLF] = current;
+        newParity = Cube.moveTables.parity[parity][move];
+        newSlice = Cube.moveTables.FRtoBR[slice][move];
+        newURFtoDLF = Cube.moveTables.URFtoDLF[URFtoDLF][move];
+        return (newURFtoDLF * N_SLICE2 + newSlice) * 2 + newParity;
+      }
+    ],
+    sliceURtoDFParity: [
+      2,
+      N_SLICE2 * N_URtoDF * N_PARITY,
+      function(index) {
+        return [index % 2,
+      (index / 2 | 0) % N_SLICE2,
+      (index / 2 | 0) / N_SLICE2 | 0];
+      },
+      function(current,
+      move) {
+        var URtoDF,
+      newParity,
+      newSlice,
+      newURtoDF,
+      parity,
+      slice;
+        [parity,
+      slice,
+      URtoDF] = current;
+        newParity = Cube.moveTables.parity[parity][move];
+        newSlice = Cube.moveTables.FRtoBR[slice][move];
+        newURtoDF = Cube.moveTables.URtoDF[URtoDF][move];
+        return (newURtoDF * N_SLICE2 + newSlice) * 2 + newParity;
+      }
+    ]
+  };
+
+  Cube.computePruningTables = function(...tables) {
+    var len, m, name, params, tableName;
+    if (tables.length === 0) {
+      tables = (function() {
+        var results;
+        results = [];
+        for (name in pruningTableParams) {
+          results.push(name);
+        }
+        return results;
+      })();
+    }
+    for (m = 0, len = tables.length; m < len; m++) {
+      tableName = tables[m];
+      if (this.pruningTables[tableName] !== null) {
+        // Already computed
+        continue;
+      }
+      params = pruningTableParams[tableName];
+      this.pruningTables[tableName] = computePruningTable(...params);
+    }
+    return this;
+  };
+
+  Cube.initSolver = function() {
+    Cube.computeMoveTables();
+    return Cube.computePruningTables();
+  };
+
+  Cube.prototype.solveUpright = function(maxDepth = 22) {
+    var State, freeStates, moveNames, phase1, phase1search, phase2, phase2search, solution, state, x;
+    // Names for all moves, i.e. U, U2, U', F, F2, ...
+    moveNames = (function() {
+      var face, faceName, m, o, power, powerName, result;
+      faceName = ['U', 'R', 'F', 'D', 'L', 'B'];
+      powerName = ['', '2', "'"];
+      result = [];
+      for (face = m = 0; m <= 5; face = ++m) {
+        for (power = o = 0; o <= 2; power = ++o) {
+          result.push(faceName[face] + powerName[power]);
+        }
+      }
+      return result;
+    })();
+    State = class State {
+      constructor(cube) {
+        this.parent = null;
+        this.lastMove = null;
+        this.depth = 0;
+        if (cube) {
+          this.init(cube);
+        }
+      }
+
+      init(cube) {
+        // Phase 1 coordinates
+        this.flip = cube.flip();
+        this.twist = cube.twist();
+        this.slice = cube.FRtoBR() / N_SLICE2 | 0;
+        // Phase 2 coordinates
+        this.parity = cube.cornerParity();
+        this.URFtoDLF = cube.URFtoDLF();
+        this.FRtoBR = cube.FRtoBR();
+        // These are later merged to URtoDF when phase 2 begins
+        this.URtoUL = cube.URtoUL();
+        this.UBtoDF = cube.UBtoDF();
+        return this;
+      }
+
+      solution() {
+        if (this.parent) {
+          return this.parent.solution() + moveNames[this.lastMove] + ' ';
+        } else {
+          return '';
+        }
+      }
+
+      //# Helpers
+      move(table, index, move) {
+        return Cube.moveTables[table][index][move];
+      }
+
+      pruning(table, index) {
+        return pruning(Cube.pruningTables[table], index);
+      }
+
+      //# Phase 1
+
+      // Return the next valid phase 1 moves for this state
+      moves1() {
+        if (this.lastMove !== null) {
+          return nextMoves1[this.lastMove / 3 | 0];
+        } else {
+          return allMoves1;
+        }
+      }
+
+      // Compute the minimum number of moves to the end of phase 1
+      minDist1() {
+        var d1, d2;
+        // The maximum number of moves to the end of phase 1 wrt. the
+        // combination flip and slice coordinates only
+        d1 = this.pruning('sliceFlip', N_SLICE1 * this.flip + this.slice);
+        // The combination of twist and slice coordinates
+        d2 = this.pruning('sliceTwist', N_SLICE1 * this.twist + this.slice);
+        // The true minimal distance is the maximum of these two
+        return max(d1, d2);
+      }
+
+      // Compute the next phase 1 state for the given move
+      next1(move) {
+        var next;
+        next = freeStates.pop();
+        next.parent = this;
+        next.lastMove = move;
+        next.depth = this.depth + 1;
+        next.flip = this.move('flip', this.flip, move);
+        next.twist = this.move('twist', this.twist, move);
+        next.slice = this.move('FRtoBR', this.slice * 24, move) / 24 | 0;
+        return next;
+      }
+
+      //# Phase 2
+
+      // Return the next valid phase 2 moves for this state
+      moves2() {
+        if (this.lastMove !== null) {
+          return nextMoves2[this.lastMove / 3 | 0];
+        } else {
+          return allMoves2;
+        }
+      }
+
+      // Compute the minimum number of moves to the solved cube
+      minDist2() {
+        var d1, d2, index1, index2;
+        index1 = (N_SLICE2 * this.URtoDF + this.FRtoBR) * N_PARITY + this.parity;
+        d1 = this.pruning('sliceURtoDFParity', index1);
+        index2 = (N_SLICE2 * this.URFtoDLF + this.FRtoBR) * N_PARITY + this.parity;
+        d2 = this.pruning('sliceURFtoDLFParity', index2);
+        return max(d1, d2);
+      }
+
+      // Initialize phase 2 coordinates
+      init2(top = true) {
+        if (this.parent === null) {
+          if (top) this.URtoDF = this.move('mergeURtoDF', this.URtoUL, this.UBtoDF);
           return;
         }
-
-        const state = { angle: 0 };
-        new TWEEN.Tween(state)
-          .to({ angle: targetAngle }, duration)
-          .easing(TWEEN.Easing.Cubic.Out)
-          .onUpdate(() => setPivotAngle(axisName, state.angle))
-          .onComplete(() => {
-            setPivotAngle(axisName, targetAngle);
-            finishPivot();
-            resolve();
-          })
-          .start();
-      });
-    }
-
-    function faceKeyFromWorldPosition(position) {
-      const ax = Math.abs(position.x);
-      const ay = Math.abs(position.y);
-      const az = Math.abs(position.z);
-      if (ax >= ay && ax >= az) return position.x > 0 ? 'px' : 'nx';
-      if (ay >= ax && ay >= az) return position.y > 0 ? 'py' : 'ny';
-      return position.z > 0 ? 'pz' : 'nz';
-    }
-
-    function isCubeSolved() {
-      const worldPosition = new THREE.Vector3();
-      scene.updateMatrixWorld(true);
-      for (const cubie of cubies) {
-        for (const child of cubie.children) {
-          if (!child.userData.faceKey) continue;
-          child.getWorldPosition(worldPosition);
-          if (faceKeyFromWorldPosition(worldPosition) !== child.userData.faceKey) return false;
+        // For other states, the phase 2 state is computed based on
+        // parent's state.
+        // Already assigned for the initial state
+        this.parent.init2(false);
+        this.URFtoDLF = this.move('URFtoDLF', this.parent.URFtoDLF, this.lastMove);
+        this.FRtoBR = this.move('FRtoBR', this.parent.FRtoBR, this.lastMove);
+        this.parity = this.move('parity', this.parent.parity, this.lastMove);
+        this.URtoUL = this.move('URtoUL', this.parent.URtoUL, this.lastMove);
+        this.UBtoDF = this.move('UBtoDF', this.parent.UBtoDF, this.lastMove);
+        if (top) {
+          // This is the initial phase 2 state. Get the URtoDF coordinate
+          // by merging URtoUL and UBtoDF
+          return this.URtoDF = this.move('mergeURtoDF', this.URtoUL, this.UBtoDF);
         }
       }
-      return true;
-    }
 
-    function startChallengeTimer() {
-      challengeActive = true;
-      challengeStart = performance.now();
-      lastChallengeTime = 0;
-      updateTimerReadout();
-    }
-
-    function stopChallengeTimer() {
-      if (!challengeActive) return;
-      lastChallengeTime = performance.now() - challengeStart;
-      challengeActive = false;
-      if (!bestChallengeTime || lastChallengeTime < bestChallengeTime) {
-        bestChallengeTime = lastChallengeTime;
-        localStorage.setItem('rubiksBestTime', String(bestChallengeTime));
+      // Compute the next phase 2 state for the given move
+      next2(move) {
+        var next;
+        next = freeStates.pop();
+        next.parent = this;
+        next.lastMove = move;
+        next.depth = this.depth + 1;
+        next.URFtoDLF = this.move('URFtoDLF', this.URFtoDLF, move);
+        next.FRtoBR = this.move('FRtoBR', this.FRtoBR, move);
+        next.parity = this.move('parity', this.parity, move);
+        next.URtoDF = this.move('URtoDF', this.URtoDF, move);
+        return next;
       }
-      updateTimerReadout();
-      statusEl.textContent = `Solved in ${formatTime(lastChallengeTime)}`;
-    }
 
-    function checkChallengeSolved() {
-      if (challengeActive && isCubeSolved()) stopChallengeTimer();
-    }
-
-    // ============================================================
-    // 手势投影算法核心：
-    // 点击面提供世界表面法线 normal。候选旋转轴是与 normal 垂直的两个世界轴。
-    // 对于某候选轴 axis，正向旋转时，被点击面上的瞬时运动方向是 axis × normal。
-    // 把这个 3D 方向投影到 2D 屏幕，再与鼠标滑动向量做点积：
-    // 点积绝对值最大者就是用户最可能想旋转的轴，点积正负就是旋转方向。
-    // 这样从正面、背面、顶面、斜视角拖拽都能保持视觉方向一致。
-    // ============================================================
-    const raycaster = new THREE.Raycaster();
-    const pointerNDC = new THREE.Vector2();
-
-    function getPointerScreen(event) {
-      return new THREE.Vector2(event.clientX, event.clientY);
-    }
-
-    function setPointerNDC(event) {
-      const rect = renderer.domElement.getBoundingClientRect();
-      pointerNDC.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      pointerNDC.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    }
-
-    function findCubieRoot(object) {
-      let cur = object;
-      while (cur && !cur.userData.isCubie) {
-        if (cur.userData.cubie) return cur.userData.cubie;
-        cur = cur.parent;
-      }
-      return cur && cur.userData.isCubie ? cur : null;
-    }
-
-    function raycastCubie(event) {
-      setPointerNDC(event);
-      raycaster.setFromCamera(pointerNDC, camera);
-      const hits = raycaster.intersectObjects(cubies, true);
-      if (!hits.length) return null;
-
-      const hit = hits[0];
-      const cubie = findCubieRoot(hit.object);
-      if (!cubie || !hit.face) return null;
-
-      const normalMatrix = new THREE.Matrix3().getNormalMatrix(hit.object.matrixWorld);
-      const normal = hit.face.normal.clone().applyMatrix3(normalMatrix).normalize();
-      const snappedNormal = snapNormalToWorldAxis(normal);
-
-      return {
-        cubie,
-        point: hit.point.clone(),
-        normal: snappedNormal
-      };
-    }
-
-    function snapNormalToWorldAxis(v) {
-      const ax = Math.abs(v.x);
-      const ay = Math.abs(v.y);
-      const az = Math.abs(v.z);
-      if (ax >= ay && ax >= az) return new THREE.Vector3(Math.sign(v.x) || 1, 0, 0);
-      if (ay >= ax && ay >= az) return new THREE.Vector3(0, Math.sign(v.y) || 1, 0);
-      return new THREE.Vector3(0, 0, Math.sign(v.z) || 1);
-    }
-
-    function projectWorldDirection(dir, basePoint) {
-      const rect = renderer.domElement.getBoundingClientRect();
-      const p0 = basePoint.clone().project(camera);
-      const p1 = basePoint.clone().add(dir.clone().normalize()).project(camera);
-      const v = new THREE.Vector2(
-        (p1.x - p0.x) * rect.width * 0.5,
-        -(p1.y - p0.y) * rect.height * 0.5
-      );
-      if (v.lengthSq() < 1e-6) return null;
-      return v.normalize();
-    }
-
-    function selectGestureAxis(delta) {
-      const normal = drag.faceNormal;
-      const basePoint = drag.hitPoint;
-      const deltaDir = delta.clone().normalize();
-      let best = null;
-
-      for (const [axisName, axisVector] of Object.entries(AXES)) {
-        // 只允许选择与点击表面法线垂直的两个旋转轴。
-        if (Math.abs(axisVector.dot(normal)) > 0.5) continue;
-
-        // 正角速度时，点击表面的视觉运动方向。
-        const tangent3D = axisVector.clone().cross(normal).normalize();
-        const tangent2D = projectWorldDirection(tangent3D, basePoint);
-        if (!tangent2D) continue;
-
-        const signedScore = tangent2D.dot(deltaDir);
-        const score = Math.abs(signedScore);
-        if (!best || score > best.score) {
-          best = { axisName, axisVector, tangent2D, score, signedScore };
+    };
+    solution = null;
+    phase1search = function(state) {
+      var depth, m, ref, results;
+      depth = 0;
+      results = [];
+      for (depth = 0; depth <= maxDepth; depth++) {
+        phase1(state, depth);
+        if (solution !== null) {
+          break;
         }
+        results.push(depth);
       }
-      return best;
-    }
-
-    function startLayerDrag(axisChoice) {
-      const cubieCenter = new THREE.Vector3();
-      drag.cubie.getWorldPosition(cubieCenter);
-      const layerCoord = snapToGrid(cubieCenter[axisChoice.axisName]);
-
-      if (!beginPivot(axisChoice.axisName, layerCoord)) return false;
-      drag.axisName = axisChoice.axisName;
-      drag.layerCoord = layerCoord;
-      drag.screenDirection = axisChoice.tangent2D;
-      drag.currentAngle = 0;
-      return true;
-    }
-
-    function onPointerDown(event) {
-      if (event.button !== 0 || busy || activePivot) return;
-
-      const hit = raycastCubie(event);
-      if (!hit) return;
-
-      renderer.domElement.classList.add('dragging');
-      renderer.domElement.setPointerCapture(event.pointerId);
-      controls.enabled = false;
-
-      drag = {
-        pointerId: event.pointerId,
-        start: getPointerScreen(event),
-        cubie: hit.cubie,
-        hitPoint: hit.point,
-        faceNormal: hit.normal,
-        axisName: null,
-        layerCoord: 0,
-        screenDirection: null,
-        currentAngle: 0
-      };
-      statusEl.textContent = 'Drag a layer';
-    }
-
-    function onPointerMove(event) {
-      if (!drag || event.pointerId !== drag.pointerId) return;
-
-      const current = getPointerScreen(event);
-      const delta = current.sub(drag.start);
-
-      if (!drag.axisName) {
-        if (delta.length() < DRAG_THRESHOLD) return;
-        const axisChoice = selectGestureAxis(delta);
-        if (!axisChoice) return;
-        if (!startLayerDrag(axisChoice)) return;
-        statusEl.textContent = `Layer axis: ${drag.axisName.toUpperCase()}`;
-      }
-
-      const signedPixels = delta.dot(drag.screenDirection);
-      drag.currentAngle = signedPixels * PIXEL_TO_RAD;
-      setPivotAngle(drag.axisName, drag.currentAngle);
-    }
-
-    function endPointerDrag(event) {
-      if (!drag || event.pointerId !== drag.pointerId) return;
-
-      renderer.domElement.classList.remove('dragging');
-      renderer.domElement.releasePointerCapture(event.pointerId);
-
-      if (!drag.axisName) {
-        drag = null;
-        controls.enabled = true;
-        statusEl.textContent = challengeActive ? 'Challenge running' : 'Ready';
-        return;
-      }
-
-      busy = true;
-      const axisName = drag.axisName;
-      const currentAngle = drag.currentAngle;
-      let targetAngle = Math.round(currentAngle / HALF_PI) * HALF_PI;
-
-      // 轻微拖动但已经进入旋转态时，回弹到 0；大角度时吸附到最近 90°。
-      if (Math.abs(currentAngle) < 0.20) targetAngle = 0;
-
-      const state = { angle: currentAngle };
-      new TWEEN.Tween(state)
-        .to({ angle: targetAngle }, 210)
-        .easing(TWEEN.Easing.Back.Out)
-        .onUpdate(() => setPivotAngle(axisName, state.angle))
-        .onComplete(() => {
-          setPivotAngle(axisName, targetAngle);
-          finishPivot();
-          if (Math.abs(targetAngle) > 0.01) {
-            playTurnSound();
-            checkChallengeSolved();
+      return results;
+    };
+    phase1 = function(state, depth) {
+      var len, m, move, next, ref, ref1, results;
+      if (depth === 0) {
+        if (state.minDist1() === 0) {
+          // Make sure we don't start phase 2 with a phase 2 move as the
+          // last move in phase 1, because phase 2 would then repeat the
+          // same move.
+          if (state.lastMove === null || (ref = state.lastMove, indexOf.call(allMoves2, ref) < 0)) {
+            return phase2search(state);
           }
-          drag = null;
-          busy = false;
-          controls.enabled = true;
-          statusEl.textContent = challengeActive ? 'Challenge running' : 'Ready';
-        })
-        .start();
-    }
-
-    renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
-    renderer.domElement.addEventListener('pointerdown', onPointerDown);
-    renderer.domElement.addEventListener('pointermove', onPointerMove);
-    renderer.domElement.addEventListener('pointerup', endPointerDrag);
-    renderer.domElement.addEventListener('pointercancel', endPointerDrag);
-
-    async function scrambleCube({ asChallenge = false } = {}) {
-      if (busy || drag || activePivot) return;
-      busy = true;
-      setButtonsDisabled(true);
-      controls.enabled = false;
-      challengeActive = false;
-      statusEl.textContent = asChallenge ? 'Preparing challenge...' : 'Scrambling...';
-
-      const axisNames = ['x', 'y', 'z'];
-      const outerLayers = [-STEP, STEP];
-      const moves = asChallenge ? 28 : 24;
-
-      for (let i = 0; i < moves; i++) {
-        const axisName = axisNames[Math.floor(Math.random() * axisNames.length)];
-        const layerCoord = outerLayers[Math.floor(Math.random() * outerLayers.length)];
-        const quarterTurns = Math.random() < 0.5 ? 1 : -1;
-        await animateLayerTurn(axisName, layerCoord, quarterTurns * HALF_PI, asChallenge ? 95 : 115);
-        playTurnSound(0.45);
+        }
+      } else if (depth > 0) {
+        if (state.minDist1() <= depth) {
+          ref1 = state.moves1();
+          results = [];
+          for (m = 0, len = ref1.length; m < len; m++) {
+            move = ref1[m];
+            next = state.next1(move);
+            phase1(next, depth - 1);
+            freeStates.push(next);
+            if (solution !== null) {
+              break;
+            } else {
+              results.push(void 0);
+            }
+          }
+          return results;
+        }
       }
+    };
+    phase2search = function(state) {
+      var depth, m, ref, results;
+      // Initialize phase 2 coordinates
+      state.init2();
+      results = [];
+      for (depth = 0; depth <= maxDepth - state.depth; depth++) {
+        phase2(state, depth);
+        if (solution !== null) {
+          break;
+        }
+        results.push(depth);
+      }
+      return results;
+    };
+    phase2 = function(state, depth) {
+      var len, m, move, next, ref, results;
+      if (depth === 0) {
+        if (state.minDist2() === 0) {
+          return solution = state.solution();
+        }
+      } else if (depth > 0) {
+        if (state.minDist2() <= depth) {
+          ref = state.moves2();
+          results = [];
+          for (m = 0, len = ref.length; m < len; m++) {
+            move = ref[m];
+            next = state.next2(move);
+            phase2(next, depth - 1);
+            freeStates.push(next);
+            if (solution !== null) {
+              break;
+            } else {
+              results.push(void 0);
+            }
+          }
+          return results;
+        }
+      }
+    };
+    freeStates = (function() {
+      var m, ref, results;
+      results = [];
+      for (x = m = 0, ref = maxDepth + 1; (0 <= ref ? m <= ref : m >= ref); x = 0 <= ref ? ++m : --m) {
+        results.push(new State);
+      }
+      return results;
+    })();
+    state = freeStates.pop().init(this);
+    phase1search(state);
+    freeStates.push(state);
+    // Trim the trailing space
+    if (solution === null) return null; // Bounded shallow search may have no solution.
+    if (solution.length > 0) {
+      solution = solution.substring(0, solution.length - 1);
+    }
+    return solution;
+  };
 
-      cleanupCubies();
-      busy = false;
-      setButtonsDisabled(false);
-      controls.enabled = true;
-      if (asChallenge) {
-        startChallengeTimer();
-        statusEl.textContent = 'Challenge running';
-      } else {
-        lastChallengeTime = 0;
-        updateTimerReadout();
-        statusEl.textContent = 'Ready';
+  faceNums = {
+    U: 0,
+    R: 1,
+    F: 2,
+    D: 3,
+    L: 4,
+    B: 5
+  };
+
+  faceNames = {
+    0: 'U',
+    1: 'R',
+    2: 'F',
+    3: 'D',
+    4: 'L',
+    5: 'B'
+  };
+
+  Cube.prototype.solve = function(maxDepth = 22) {
+    var clone, len, m, move, ref, rotation, solution, upright, uprightSolution;
+    clone = this.clone();
+    upright = clone.upright();
+    clone.move(upright);
+    rotation = new Cube().move(upright).center;
+    uprightSolution = clone.solveUpright(maxDepth);
+    solution = [];
+    ref = uprightSolution.split(' ');
+    for (m = 0, len = ref.length; m < len; m++) {
+      move = ref[m];
+      solution.push(faceNames[rotation[faceNums[move[0]]]]);
+      if (move.length > 1) {
+        solution[solution.length - 1] += move[1];
       }
     }
+    return solution.join(' ');
+  };
 
-    challengeBtn.addEventListener('click', () => {
-      if (soundEnabled) ensureAudioContext();
-      scrambleCube({ asChallenge: true });
-    });
-    scrambleBtn.addEventListener('click', () => {
-      if (soundEnabled) ensureAudioContext();
-      scrambleCube();
-    });
+  Cube.scramble = function() {
+    return Cube.inverse(Cube.random().solve());
+  };
 
-    soundBtn.addEventListener('click', () => {
-      soundEnabled = !soundEnabled;
-      localStorage.setItem('rubiksSound', soundEnabled ? 'on' : 'off');
-      updateSoundButton();
-      if (soundEnabled) playTurnSound(0.55);
-    });
+}).call(this);
 
-    resetBtn.addEventListener('click', () => {
-      if (busy) return;
-      TWEEN.removeAll();
-      if (activePivot) finishPivot();
-      drag = null;
-      challengeActive = false;
-      lastChallengeTime = 0;
-      buildCube();
-      cleanupCubies();
-      updateTimerReadout();
-      controls.enabled = true;
-      statusEl.textContent = 'Reset';
-      setTimeout(() => { statusEl.textContent = 'Ready'; }, 600);
-    });
+// Worker 从 54 个面片标签求解，不接收、不读取任何操作历史。
+let initialized=false;
+self.onmessage=({data})=>{
+ const {id,facelets}=data;
+ try{
+  if(typeof facelets!=='string'||facelets.length!==54)throw new Error('面片数量不正确');
+  for(const f of 'URFDLB')if([...facelets].filter(c=>c===f).length!==9)throw new Error('六面颜色数量不正确');
+  const cube=Cube.fromString(facelets);
+  if(cube.asString()!==facelets||new Set(cube.cp).size!==8||new Set(cube.ep).size!==12||cube.co.reduce((a,b)=>a+b,0)%3||cube.eo.reduce((a,b)=>a+b,0)%2||cube.cornerParity()!==cube.edgeParity())throw new Error('当前状态不符合可复原魔方的约束');
+  if(cube.isSolved()){self.postMessage({id,type:'result',algorithm:'',moves:0});return;}
+  if(!initialized){self.postMessage({id,type:'progress',phase:'init'});Cube.initSolver();initialized=true;}
+  self.postMessage({id,type:'progress',phase:'search'});
+  // 先检查浅层状态，避免仅转一两步却给出冗长的两阶段解。
+  let algorithm=null;
+  for(let depth=1;depth<=5&&algorithm===null;depth++)algorithm=cube.solveUpright(depth);
+  if(algorithm===null)algorithm=cube.solveUpright(22);
+  if(algorithm===null||!cube.clone().move(algorithm).isSolved())throw new Error('解序列校验未通过');
+  self.postMessage({id,type:'result',algorithm,moves:algorithm.trim()?algorithm.trim().split(/\s+/).length:0});
+ }catch(error){self.postMessage({id,type:'error',message:error.message});}
+};
 
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    });
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { Tween, Group, Easing } from '@tweenjs/tween.js';
 
-    function animate(time) {
-      requestAnimationFrame(animate);
-      TWEEN.update(time);
-      if (challengeActive) updateTimerReadout();
-      controls.update();
-      renderer.render(scene, camera);
-    }
+const HALF=Math.PI/2, PITCH=1, EPSILON=0.05;
+const AXES={x:new THREE.Vector3(1,0,0),y:new THREE.Vector3(0,1,0),z:new THREE.Vector3(0,0,1)};
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(36,innerWidth/innerHeight,0.1,80);
+camera.position.set(6.5,5.1,7.7);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.VSMShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;
+document.getElementById('studio').appendChild(renderer.domElement);
+const canvas=renderer.domElement;canvas.setAttribute('aria-label','交互式三阶魔方。左键转层，右键转视角。');canvas.tabIndex=0;
+const controls=new OrbitControls(camera,canvas);
+controls.enableDamping=false; // 拖拽锁定时相机必须静止，避免投影参照系漂移。
+controls.enablePan=false;controls.minDistance=6.5;controls.maxDistance=16;
+controls.minPolarAngle=0.08;controls.maxPolarAngle=Math.PI-0.08;
+controls.mouseButtons={LEFT:null,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.ROTATE};
+controls.touches={ONE:THREE.TOUCH.ROTATE,TWO:THREE.TOUCH.DOLLY_ROTATE};
+controls.target.set(0,-0.1,0);controls.update();controls.saveState();
 
-    animate();
-  </script>
-</body>
-</html>
+scene.add(new THREE.AmbientLight(0xffffff,1.3));
+const key=new THREE.DirectionalLight(0xfff6e5,3.5);key.position.set(-2.5,10,3);key.castShadow=true;
+key.shadow.mapSize.set(2048,2048);Object.assign(key.shadow.camera,{left:-6,right:6,top:6,bottom:-6,near:0.5,far:25});key.shadow.bias=-0.00035;key.shadow.normalBias=0.025;key.shadow.radius=4;key.shadow.blurSamples=8;scene.add(key);
+const rim=new THREE.DirectionalLight(0xe4edff,2.3);rim.position.set(5,3,-5);scene.add(rim);
+// 完全由 Canvas 生成摄影棚柔光箱环境，不加载 HDR、图片或外部贴图。
+const envCanvas=document.createElement('canvas');envCanvas.width=1024;envCanvas.height=512;
+const ec=envCanvas.getContext('2d');ec.fillStyle='#474e50';ec.fillRect(0,0,1024,512);
+for(const [x,y,w,h] of [[120,60,190,160],[670,100,240,120],[420,340,110,70]]){const g=ec.createRadialGradient(x+w/2,y+h/2,1,x+w/2,y+h/2,w*.7);g.addColorStop(0,'#ffffff');g.addColorStop(.45,'#c4caca');g.addColorStop(1,'#474e50');ec.fillStyle=g;ec.fillRect(x-w/3,y-h/2,w*1.7,h*2);}
+const envTexture=new THREE.CanvasTexture(envCanvas);envTexture.mapping=THREE.EquirectangularReflectionMapping;envTexture.colorSpace=THREE.SRGBColorSpace;
+const pmrem=new THREE.PMREMGenerator(renderer),envTarget=pmrem.fromEquirectangular(envTexture);scene.environment=envTarget.texture;envTexture.dispose();pmrem.dispose();
+// 柔光棚拍的地面投影：从地面向上采集真实几何深度，再做分离高斯模糊。
+// 阴影来自当前 27 个方块的形状与离地高度；不是贴一张固定灰色椭圆。
+const groundY=-2.18,shadowExtent=8,shadowSize=512;
+const contactTarget=new THREE.WebGLRenderTarget(shadowSize,shadowSize),blurTarget=new THREE.WebGLRenderTarget(shadowSize,shadowSize);
+const contactCamera=new THREE.OrthographicCamera(-shadowExtent/2,shadowExtent/2,shadowExtent/2,-shadowExtent/2,.01,6);
+contactCamera.position.set(0,groundY,0);contactCamera.up.set(0,0,1);contactCamera.lookAt(0,0,0);contactCamera.updateMatrixWorld();
+const contactDepth=new THREE.ShaderMaterial({
+ uniforms:{ground:{value:groundY}},
+ vertexShader:`uniform float ground; varying float heightAboveGround;
+ void main(){vec4 world=modelMatrix*vec4(position,1.0);heightAboveGround=world.y-ground;gl_Position=projectionMatrix*viewMatrix*world;}`,
+ fragmentShader:`varying float heightAboveGround;
+ void main(){float opacity=0.34*exp(-max(heightAboveGround,0.0)*0.8);gl_FragColor=vec4(0.12,0.15,0.12,opacity);}`,
+ side:THREE.DoubleSide,blending:THREE.NoBlending
+});
+const contactPlane=new THREE.Mesh(new THREE.PlaneGeometry(shadowExtent,shadowExtent),new THREE.MeshBasicMaterial({map:contactTarget.texture,transparent:true,depthWrite:false,side:THREE.DoubleSide,toneMapped:false}));
+// Camera 向上看时屏幕纵轴对应 +Z，因此贴图平面也把本地 +Y 对齐 +Z。
+contactPlane.rotation.x=HALF;contactPlane.position.y=groundY;contactPlane.renderOrder=1;scene.add(contactPlane);
+const blurScene=new THREE.Scene(),blurCamera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+const blurMaterial=new THREE.ShaderMaterial({
+ uniforms:{source:{value:null},stepSize:{value:new THREE.Vector2()}},
+ vertexShader:`varying vec2 uvCoord;void main(){uvCoord=uv;gl_Position=vec4(position.xy,0.0,1.0);}`,
+ fragmentShader:`uniform sampler2D source;uniform vec2 stepSize;varying vec2 uvCoord;
+ void main(){vec4 sum=texture2D(source,uvCoord)*0.227027;
+ sum+=(texture2D(source,uvCoord+stepSize*1.384615)+texture2D(source,uvCoord-stepSize*1.384615))*0.316216;
+ sum+=(texture2D(source,uvCoord+stepSize*3.230769)+texture2D(source,uvCoord-stepSize*3.230769))*0.070270;
+ gl_FragColor=sum;}`,
+ depthTest:false,depthWrite:false,blending:THREE.NoBlending
+});
+blurScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),blurMaterial));
+let shadowDirty=true;
+function renderContactShadow(){
+ const oldClear=new THREE.Color();renderer.getClearColor(oldClear);const oldAlpha=renderer.getClearAlpha(),oldTarget=renderer.getRenderTarget();
+ const oldOverride=scene.overrideMaterial,oldShadowUpdate=renderer.shadowMap.autoUpdate;
+ contactPlane.visible=false;scene.overrideMaterial=contactDepth;renderer.shadowMap.autoUpdate=false;
+ renderer.setClearColor(0x000000,0);renderer.setRenderTarget(contactTarget);renderer.clear();renderer.render(scene,contactCamera);
+ scene.overrideMaterial=oldOverride;
+ // 约 0.2 世界单位的柔化范围，适合离地约 0.7 单位的漫射棚灯投影。
+ for(const radius of [3.5,1.75]){
+  blurMaterial.uniforms.source.value=contactTarget.texture;blurMaterial.uniforms.stepSize.value.set(radius/shadowSize,0);
+  renderer.setRenderTarget(blurTarget);renderer.clear();renderer.render(blurScene,blurCamera);
+  blurMaterial.uniforms.source.value=blurTarget.texture;blurMaterial.uniforms.stepSize.value.set(0,radius/shadowSize);
+  renderer.setRenderTarget(contactTarget);renderer.clear();renderer.render(blurScene,blurCamera);
+ }
+ renderer.setRenderTarget(oldTarget);renderer.setClearColor(oldClear,oldAlpha);renderer.shadowMap.autoUpdate=oldShadowUpdate;
+ contactPlane.visible=true;shadowDirty=false;
+}
+
+
+function roundedRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);}
+function stickerMaterial(color){
+ const c=document.createElement('canvas');c.width=c.height=256;const ctx=c.getContext('2d');
+ // 透明圆角露出下面的真实黑色塑料，渐变和细边模拟贴纸倒角与清漆反光。
+ roundedRect(ctx,7,7,242,242,24);ctx.fillStyle=color;ctx.fill();ctx.save();ctx.clip();
+ const g=ctx.createLinearGradient(0,0,210,256);g.addColorStop(0,'rgba(255,255,255,.30)');g.addColorStop(.25,'rgba(255,255,255,.035)');g.addColorStop(.7,'rgba(0,0,0,.02)');g.addColorStop(1,'rgba(0,0,0,.14)');ctx.fillStyle=g;ctx.fillRect(0,0,256,256);
+ ctx.restore();roundedRect(ctx,8.5,8.5,239,239,23);ctx.strokeStyle='rgba(255,255,255,.26)';ctx.lineWidth=2;ctx.stroke();
+ const texture=new THREE.CanvasTexture(c);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
+ return new THREE.MeshPhysicalMaterial({map:texture,transparent:true,alphaTest:.5,roughness:.29,metalness:0,clearcoat:.65,clearcoatRoughness:.2,polygonOffset:true,polygonOffsetFactor:-1});
+}
+const palette={R:stickerMaterial('#cd3833'),L:stickerMaterial('#f38a26'),U:stickerMaterial('#f3f0df'),D:stickerMaterial('#f1cd37'),F:stickerMaterial('#369771'),B:stickerMaterial('#367bc2')};
+const bodyMaterial=new THREE.MeshPhysicalMaterial({color:0x171b1c,roughness:.36,metalness:0,clearcoat:.25,clearcoatRoughness:.28});
+const bodyGeometry=new RoundedBoxGeometry(.948,.948,.948,4,.055),stickerGeometry=new THREE.PlaneGeometry(.874,.874);
+// 只维护扁平对象列表。逻辑状态直接来源于对象的世界坐标，不建立三维状态数组。
+const cubies=[],pickables=[];
+const faces=[['x',1,'R'],['x',-1,'L'],['y',1,'U'],['y',-1,'D'],['z',1,'F'],['z',-1,'B']];
+for(let x=-1;x<=1;x++)for(let y=-1;y<=1;y++)for(let z=-1;z<=1;z++){
+ const cubie=new THREE.Group();cubie.position.set(x*PITCH,y*PITCH,z*PITCH);cubie.userData.home=cubie.position.clone();
+ const body=new THREE.Mesh(bodyGeometry,bodyMaterial);body.castShadow=body.receiveShadow=true;body.userData.cubie=cubie;cubie.add(body);pickables.push(body);
+ for(const [axis,sign,color] of faces){if(cubie.position[axis]!==sign*PITCH)continue;const s=new THREE.Mesh(stickerGeometry,palette[color]);s.position[axis]=sign*.4755;s.quaternion.setFromUnitVectors(AXES.z,AXES[axis].clone().multiplyScalar(sign));s.userData.cubie=cubie;s.userData.color=color;s.castShadow=true;cubie.add(s);pickables.push(s);}
+ cubies.push(cubie);scene.add(cubie);
+}
+let active=null,gesture=null,busy=false,moveCount=0,generation=0;
+const tweenGroup=new Group();
+const status=document.getElementById('status'),angleLabel=document.getElementById('angle'),scrambleButton=document.getElementById('scramble'),solveButton=document.getElementById('solve'),challengeButton=document.getElementById('challenge'),soundButton=document.getElementById('sound');
+function setStatus(text){status.textContent=text;}
+function updateButtons(){challengeButton.disabled=busy;scrambleButton.disabled=busy;solveButton.disabled=busy||isSolved();}
+function setBusy(value){busy=value;updateButtons();}
+// 与经典版共用本地成绩与声音偏好；禁用存储时仍可正常计时和游玩。
+function readPreference(key,fallback){try{return localStorage.getItem(key)??fallback;}catch{return fallback;}}
+function savePreference(key,value){try{localStorage.setItem(key,String(value));}catch{}}
+const savedBest=Number(readPreference('rubiksBestTime','0'));
+let bestChallengeTime=Number.isFinite(savedBest)&&savedBest>0?savedBest:0;
+let challengePhase='idle',challengeStart=0,challengeElapsed=0,challengeFinishText='';
+let soundEnabled=readPreference('rubiksSound','on')!=='off',audioCtx=null,audioUnavailable=false;
+const timerText=document.getElementById('timerText'),bestText=document.getElementById('bestText'),challengeLabel=document.getElementById('challengeLabel');
+function formatTime(ms){
+ const cs=Math.max(0,Math.floor(ms/10));
+ return String(Math.floor(cs/6000)).padStart(2,'0')+':'+String(Math.floor(cs/100)%60).padStart(2,'0')+'.'+String(cs%100).padStart(2,'0');
+}
+function updateTimerReadout(){
+ timerText.textContent=formatTime(challengePhase==='running'?performance.now()-challengeStart:challengeElapsed);
+ bestText.textContent=bestChallengeTime?formatTime(bestChallengeTime):'--:--.--';
+ const labels={idle:'挑战计时',preparing:'挑战准备中',running:'挑战进行中',completed:'挑战已完成',cancelled:'本次不计成绩'};
+ challengeLabel.textContent=labels[challengePhase];
+ timerText.classList.toggle('running',challengePhase==='running');
+}
+function cancelChallenge(resetTime=true){
+ if(challengePhase==='running')challengeElapsed=performance.now()-challengeStart;
+ const inProgress=challengePhase==='running'||challengePhase==='preparing';
+ challengePhase=resetTime?'idle':inProgress?'cancelled':challengePhase;
+ if(resetTime)challengeElapsed=0;challengeFinishText='';updateTimerReadout();
+}
+function startChallengeTimer(){challengePhase='running';challengeStart=performance.now();challengeElapsed=0;challengeFinishText='';updateTimerReadout();}
+function checkChallengeSolved(){
+ if(challengePhase!=='running'||!isSolved())return;
+ challengeElapsed=performance.now()-challengeStart;challengePhase='completed';
+ const newBest=!bestChallengeTime||challengeElapsed<bestChallengeTime;
+ if(newBest){bestChallengeTime=challengeElapsed;savePreference('rubiksBestTime',bestChallengeTime);}
+ challengeFinishText='挑战完成 · '+formatTime(challengeElapsed)+(newBest?' · 新纪录':'');
+ updateTimerReadout();setStatus(challengeFinishText);
+}
+function idleStatus(){return challengePhase==='running'?'挑战进行中 · 手动复原以完成挑战':challengeFinishText||'就绪 · 拖动任一色块开始';}
+function updateSoundButton(){
+ soundButton.setAttribute('aria-pressed',String(soundEnabled));
+ soundButton.setAttribute('aria-label',audioUnavailable?'旋转音效不可用':soundEnabled?'关闭旋转音效':'开启旋转音效');
+ document.getElementById('soundText').textContent=audioUnavailable?'声音不可用':soundEnabled?'声音 开':'声音 关';
+ soundButton.classList.toggle('muted',!soundEnabled);soundButton.disabled=audioUnavailable;
+}
+function ensureAudioContext(){
+ if(!soundEnabled||audioUnavailable)return null;
+ try{
+  const Audio=window.AudioContext||window.webkitAudioContext;
+  if(!Audio)throw new Error('Audio unavailable');
+  if(!audioCtx)audioCtx=new Audio();
+  if(audioCtx.state==='suspended')audioCtx.resume().catch(()=>{});
+  return audioCtx;
+ }catch{audioUnavailable=true;soundEnabled=false;updateSoundButton();return null;}
+}
+function playTurnSound(strength=1){
+ const ctx=ensureAudioContext();if(!ctx||ctx.state!=='running')return;
+ // Web Audio 实时合成短噪声与低频卡扣声，不加载音频文件。
+ try{
+  const now=ctx.currentTime,duration=.055;
+  const buffer=ctx.createBuffer(1,Math.floor(ctx.sampleRate*duration),ctx.sampleRate),samples=buffer.getChannelData(0);
+  for(let i=0;i<samples.length;i++)samples[i]=(Math.random()*2-1)*(1-i/samples.length);
+  const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),noiseGain=ctx.createGain();noise.buffer=buffer;
+  filter.type='bandpass';filter.frequency.setValueAtTime(1300+Math.random()*420,now);filter.Q.setValueAtTime(7,now);
+  noiseGain.gain.setValueAtTime(.0001,now);noiseGain.gain.exponentialRampToValueAtTime(.11*strength,now+.004);noiseGain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+  const knock=ctx.createOscillator(),knockGain=ctx.createGain();knock.type='square';
+  knock.frequency.setValueAtTime(92+Math.random()*16,now);knock.frequency.exponentialRampToValueAtTime(58+Math.random()*8,now+.045);
+  knockGain.gain.setValueAtTime(.0001,now);knockGain.gain.exponentialRampToValueAtTime(.035*strength,now+.003);knockGain.gain.exponentialRampToValueAtTime(.0001,now+.052);
+  noise.connect(filter).connect(noiseGain).connect(ctx.destination);knock.connect(knockGain).connect(ctx.destination);
+  noise.onended=()=>{noise.disconnect();filter.disconnect();noiseGain.disconnect();};knock.onended=()=>{knock.disconnect();knockGain.disconnect();};
+  noise.start(now);noise.stop(now+duration);knock.start(now);knock.stop(now+.06);
+ }catch{/* 声音设备不可用时，不中断魔方转动或挑战计时。 */}
+}
+soundButton.addEventListener('click',()=>{soundEnabled=!soundEnabled;savePreference('rubiksSound',soundEnabled?'on':'off');updateSoundButton();if(soundEnabled)ensureAudioContext();});
+updateSoundButton();updateTimerReadout();
+
+function isSolved(){
+ // 按当前朝外的法线聚合颜色，允许中层转动和整体朝向变化。
+ const colors=new Map(),normal=new THREE.Vector3();scene.updateMatrixWorld(true);
+ for(const cubie of cubies)for(const mesh of cubie.children){if(!mesh.userData.color)continue;normal.set(0,0,1).transformDirection(mesh.matrixWorld);const axis=Object.keys(AXES).reduce((a,b)=>Math.abs(normal[a])>Math.abs(normal[b])?a:b);const face=axis+Math.sign(normal[axis]);if(colors.has(face)&&colors.get(face)!==mesh.userData.color)return false;colors.set(face,mesh.userData.color);}
+ return colors.size===6;
+}
+function updateReadout(){document.getElementById('moves').textContent=String(moveCount).padStart(2,'0');document.getElementById('state').textContent=isSolved()?'SOLVED / 已复原':'EXPLORING / 探索中';updateButtons();}
+function beginLayer(axis,layer){
+ if(active)return null;
+ scene.updateMatrixWorld(true);
+ const world=new THREE.Vector3();
+ // 动态筛选：每次都读取 World Position，以 Epsilon 判断归属，不依赖初始索引。
+ const selected=cubies.filter(c=>Math.abs(c.getWorldPosition(world)[axis]-layer*PITCH)<EPSILON);
+ if(selected.length!==9)throw new Error('层选择应包含 9 个方块');
+ const pivot=new THREE.Group();scene.add(pivot);
+ // attach 保持世界变换不变；临时父节点统一旋转，避免手工四元数组合。
+ for(const c of selected)pivot.attach(c);
+ active={pivot,axis,layer,selected,angle:0};return active;
+}
+function setAngle(angle){if(!active)return;active.angle=angle;active.pivot.rotation[active.axis]=angle;angleLabel.textContent=Math.round(THREE.MathUtils.radToDeg(angle))+'°';}
+function cleanGrid(){
+ shadowDirty=true;
+ for(const c of cubies){
+  c.position.set(Math.round(c.position.x/PITCH)*PITCH,Math.round(c.position.y/PITCH)*PITCH,Math.round(c.position.z/PITCH)*PITCH);
+  // Rotation 单位是弧度，应对“90°的倍数”取整，不能直接对弧度取整。
+  c.rotation.set(Math.round(c.rotation.x/HALF)*HALF,Math.round(c.rotation.y/HALF)*HALF,Math.round(c.rotation.z/HALF)*HALF);
+  c.updateMatrix();
+ }
+ scene.updateMatrixWorld(true);
+}
+function commitLayer(count=true){
+ if(!active)return;const {pivot,selected,angle}=active;
+ pivot.updateMatrixWorld(true);for(const c of selected)scene.attach(c);scene.remove(pivot);active=null;
+ cleanGrid();const turns=Math.round(angle/HALF);
+ if(Math.abs(turns)%4!==0){if(count)moveCount++;playTurnSound(count?1:.45);}
+ if(count)checkChallengeSolved();
+ angleLabel.textContent='';updateReadout();
+}
+function animateTo(target,duration,count=true){
+ return new Promise(resolve=>{const value={angle:active.angle};new Tween(value,tweenGroup).to({angle:target},duration).easing(Easing.Cubic.Out).onUpdate(()=>setAngle(value.angle)).onComplete(()=>{setAngle(target);commitLayer(count);resolve(true);}).onStop(()=>resolve(false)).start();});
+}
+async function releaseGesture(cancel=false){
+ if(!gesture)return;gesture=null;controls.enabled=true;canvas.style.cursor='grab';
+ if(!active){setStatus(idleStatus());return;}
+ setBusy(true);const token=generation;
+ const target=cancel?0:Math.round(active.angle/HALF)*HALF;
+ setStatus('吸附对齐');await animateTo(target,180+Math.min(180,Math.abs(target-active.angle)*170));
+ if(token!==generation)return;setBusy(false);setStatus(challengePhase==='running'||challengeFinishText?idleStatus():isSolved()?'已复原 · 每一面，恰到好处':'就绪 · 继续探索');
+}
+const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
+function hitAt(x,y){const rect=canvas.getBoundingClientRect();pointer.set((x-rect.left)/rect.width*2-1,-(y-rect.top)/rect.height*2+1);raycaster.setFromCamera(pointer,camera);scene.updateMatrixWorld(true);return raycaster.intersectObjects(pickables,false)[0];}
+function screenPoint(p){const r=canvas.getBoundingClientRect(),v=p.clone().project(camera);return new THREE.Vector2((v.x+1)*r.width/2,(1-v.y)*r.height/2);}
+function projectedVector(p,v){return screenPoint(p.clone().add(v)).sub(screenPoint(p));}
+function dominantNormal(n){const key=Object.keys(AXES).reduce((a,b)=>Math.abs(n[a])>Math.abs(n[b])?a:b);return AXES[key].clone().multiplyScalar(Math.sign(n[key]));}
+function chooseAxis(g,delta){
+ const drag=delta.clone().normalize();let best=null;
+ // 法线排除垂直于点击面的轴，只留下两个潜在旋转轴。
+ for(const [name,axis] of Object.entries(AXES)){
+  if(Math.abs(axis.dot(g.normal))>.5)continue;
+  // 先把两个面内 3D 轴投影到 2D；旋转轴与滑动方向并不相同！
+  // 正向转动的面内切线 t = axis × normal，恰好是另一个面内轴（带符号）。
+  // 对 t 的投影做 Dot 匹配，相当于投影两个轴后按叉积关系映射到旋转轴。
+  const tangent=new THREE.Vector3().crossVectors(axis,g.normal);
+  const tAxis=Object.keys(AXES).find(k=>Math.abs(tangent[k])>.5);
+  const projectedAxis=projectedVector(g.hit,AXES[tAxis]);
+  const projectedTangent=projectedAxis.multiplyScalar(Math.sign(tangent[tAxis]));
+  if(projectedTangent.lengthSq()<1e-6)continue;
+  const score=Math.abs(drag.dot(projectedTangent.clone().normalize()));
+  // 刚体速度 v = ω × r。用真实点击点的投影导数计算像素/弧度及方向。
+  // 投影本身包含相机正反面与屏幕 Y 翻转，因此无需写死正面/背面符号。
+  const velocity=new THREE.Vector3().crossVectors(axis,g.hit);
+  const derivative=projectedVector(g.hit,velocity.multiplyScalar(.001)).multiplyScalar(1000);
+  if(derivative.length()<12)continue;
+  if(!best||score>best.score)best={axis:name,score,direction:derivative.clone().normalize(),pixelsPerRad:Math.max(45,derivative.length())};
+ }
+ return best;
+}
+// 捕获阶段在 OrbitControls 之前截获色块手势；空白触摸交由 OrbitControls。
+const touches=new Set();let touchOrbit=false;
+canvas.addEventListener('pointerdown',e=>{
+ if(e.pointerType==='touch'){
+  touches.add(e.pointerId);
+  if(touches.size>1){touchOrbit=true;if(gesture){const previous=gesture;releaseGesture(true);canvas.dispatchEvent(new PointerEvent('pointerdown',{pointerId:previous.id,pointerType:'touch',clientX:previous.current.x,clientY:previous.current.y,bubbles:false}));}return;}
+ }
+ if(e.button!==0||busy||gesture||touchOrbit)return;
+ const hit=hitAt(e.clientX,e.clientY);if(!hit)return;
+ e.preventDefault();e.stopImmediatePropagation();ensureAudioContext();controls.enabled=false;
+ canvas.setPointerCapture(e.pointerId);canvas.style.cursor='grabbing';
+ const normal=dominantNormal(hit.face.normal.clone().transformDirection(hit.object.matrixWorld));
+ gesture={id:e.pointerId,start:new THREE.Vector2(e.clientX,e.clientY),current:new THREE.Vector2(e.clientX,e.clientY),hit:hit.point.clone(),normal,cubie:hit.object.userData.cubie,choice:null};
+},true);
+canvas.addEventListener('pointermove',e=>{
+ if(!gesture||gesture.id!==e.pointerId)return;e.preventDefault();e.stopImmediatePropagation();
+ gesture.current.set(e.clientX,e.clientY);
+ const delta=gesture.current.clone().sub(gesture.start);
+ if(!gesture.choice){if(delta.length()<6)return;const choice=chooseAxis(gesture,delta);if(!choice)return;gesture.choice=choice;
+  const world=gesture.cubie.getWorldPosition(new THREE.Vector3());beginLayer(choice.axis,Math.round(world[choice.axis]/PITCH));setStatus('转动 '+choice.axis.toUpperCase()+' 层 · 松手自动吸附');
+ }
+ const {direction,pixelsPerRad}=gesture.choice;
+ // 不使用时间积分或 Tween 追赶：位移直接映射到弧度，支持反向拖回及多圈转动。
+ setAngle(delta.dot(direction)/pixelsPerRad);
+},true);
+function endPointer(e,cancel=false){
+ touches.delete(e.pointerId);if(touches.size===0)touchOrbit=false;
+ if(gesture?.id===e.pointerId){e.stopImmediatePropagation();releaseGesture(cancel);if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);}
+}
+canvas.addEventListener('pointerup',e=>endPointer(e),true);canvas.addEventListener('pointercancel',e=>endPointer(e,true),true);
+canvas.addEventListener('lostpointercapture',e=>{if(gesture?.id===e.pointerId)releaseGesture(true);});
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+window.addEventListener('blur',()=>{touches.clear();touchOrbit=false;if(gesture)releaseGesture(true);});
+canvas.style.cursor='grab';
+
+async function scrambleCube(asChallenge=false){
+ if(busy||gesture||active)return;
+ ensureAudioContext();cancelChallenge();setBusy(true);const token=++generation,total=asChallenge?28:20;let previous='';
+ if(asChallenge){challengePhase='preparing';updateTimerReadout();}
+ for(let i=0;i<total;i++){
+  if(token!==generation)return;
+  const options=Object.keys(AXES).filter(a=>a!==previous),axis=options[Math.floor(Math.random()*options.length)];previous=axis;
+  const layer=Math.floor(Math.random()*3)-1,direction=Math.random()<.5?-1:1;
+  beginLayer(axis,layer);setStatus((asChallenge?'正在准备挑战':'正在打乱')+' · '+(i+1)+' / '+total);
+  const finished=await animateTo(direction*HALF,asChallenge?110:135,false);if(!finished||token!==generation)return;
+ }
+ // 极小概率打乱回到复原态时，补一个转动，避免空挑战。
+ if(isSolved()){beginLayer('x',1);const finished=await animateTo(HALF,135,false);if(!finished||token!==generation)return;}
+ moveCount=0;setBusy(false);updateReadout();
+ if(asChallenge){startChallengeTimer();setStatus(idleStatus());}else setStatus('打乱完成 · 从这里开始');
+}
+scrambleButton.addEventListener('click',()=>scrambleCube(false));
+challengeButton.addEventListener('click',()=>scrambleCube(true));
+// 从空间位置和贴纸朝向读取当前状态。六面均按从面外正视的行优先顺序排列。
+// 中层转动会改变中心色：以“当前中心色”重新标定 URFDLB，不依赖初始色朝向。
+function readFacelets(){
+ scene.updateMatrixWorld(true);
+ const cells=Object.fromEntries([...'URFDLB'].map(f=>[f,Array(9).fill(null)]));
+ const p=new THREE.Vector3(),n=new THREE.Vector3();
+ for(const c of cubies){
+  c.getWorldPosition(p);const x=Math.round(p.x/PITCH),y=Math.round(p.y/PITCH),z=Math.round(p.z/PITCH);
+  for(const mesh of c.children){
+   if(!mesh.userData.color)continue;
+   n.set(0,0,1).transformDirection(mesh.matrixWorld);
+   let f,row,col;
+   if(n.y>.5){f='U';row=z+1;col=x+1;}
+   else if(n.y<-.5){f='D';row=1-z;col=x+1;}
+   else if(n.x>.5){f='R';row=1-y;col=1-z;}
+   else if(n.x<-.5){f='L';row=1-y;col=z+1;}
+   else if(n.z>.5){f='F';row=1-y;col=x+1;}
+   else{f='B';row=1-y;col=1-x;}
+   const i=row*3+col;
+   if(row<0||row>2||col<0||col>2||cells[f][i]!==null)throw new Error('请等待转动对齐后再求解');
+   cells[f][i]=mesh.userData.color;
+  }
+ }
+ const centerLabels=Object.fromEntries(Object.entries(cells).map(([f,a])=>[a[4],f]));
+ if(Object.keys(centerLabels).length!==6)throw new Error('中心色识别失败');
+ return [...'URFDLB'].map(f=>cells[f].map(color=>{if(!color||!centerLabels[color])throw new Error('面片识别不完整');return centerLabels[color];}).join('')).join('');
+}
+function decodeMove(notation){
+ const definitions={U:['y',1,-1],R:['x',1,-1],F:['z',1,-1],D:['y',-1,1],L:['x',-1,1],B:['z',-1,1]};
+ if(!/^[URFDLB](2|')?$/.test(notation))throw new Error('未知的转动指令');
+ const [axis,layer,sign]=definitions[notation[0]];
+ const turns=notation.endsWith('2')?2:notation.endsWith("'")?-1:1;
+ return {axis,layer,angle:sign*turns*HALF};
+}
+let solverWorker=null,pendingSolve=null,solverRequest=0;
+function cancelSolver(){
+ if(!pendingSolve)return;
+ const request=pendingSolve;pendingSolve=null;clearTimeout(request.timer);
+ solverWorker?.terminate();solverWorker=null;
+ request.reject(new Error('求解已取消'));
+}
+function searchCurrentState(facelets){
+ if(!solverWorker){
+  const url=URL.createObjectURL(new Blob([document.getElementById('cube-solver').textContent],{type:'text/javascript'}));
+  solverWorker=new Worker(url);URL.revokeObjectURL(url);
+  solverWorker.onmessage=({data})=>{
+   const request=pendingSolve;if(!request||request.id!==data.id)return;
+   if(data.type==='progress'){setStatus(data.phase==='init'?'首次准备求解表 · 可继续旋转视角':'正在根据当前状态搜索较短解');return;}
+   clearTimeout(request.timer);pendingSolve=null;
+   if(data.type==='result')request.resolve(data.algorithm);else request.reject(new Error(data.message));
+  };
+  solverWorker.onerror=()=>{
+   if(pendingSolve){clearTimeout(pendingSolve.timer);pendingSolve.reject(new Error('求解器运行失败，请重试'));pendingSolve=null;}
+   solverWorker?.terminate();solverWorker=null;
+  };
+ }
+ return new Promise((resolve,reject)=>{
+  const id=++solverRequest;
+  const timer=setTimeout(()=>{
+   if(pendingSolve?.id!==id)return;
+   pendingSolve=null;solverWorker?.terminate();solverWorker=null;reject(new Error('本次搜索时间较长，请重试'));
+  },45000);
+  pendingSolve={id,resolve,reject,timer};solverWorker.postMessage({id,facelets});
+ });
+}
+solveButton.addEventListener('click',async()=>{
+ if(busy||gesture||active||isSolved())return;
+ // 机器求解不能计入手动挑战成绩；即使搜索失败，本轮也不再记分。
+ ensureAudioContext();cancelChallenge(false);setBusy(true);const token=++generation;
+ try{
+  setStatus('正在读取六面状态');
+  const algorithm=await searchCurrentState(readFacelets());
+  if(token!==generation)return;
+  const steps=algorithm.trim()?algorithm.trim().split(/\s+/):[];
+  for(let i=0;i<steps.length;i++){
+   if(token!==generation)return;
+   const move=decodeMove(steps[i]);beginLayer(move.axis,move.layer);
+   setStatus('近似最优解 · '+(i+1)+' / '+steps.length+' 步 · '+steps[i]);
+   const finished=await animateTo(move.angle,Math.abs(move.angle)>HALF?440:320,false);
+   if(!finished||token!==generation)return;
+  }
+  if(!isSolved())throw new Error('动画结果未通过复原校验');
+  moveCount=0;updateReadout();setStatus('已复原 · '+steps.length+' 步近似最优解');
+ }catch(error){if(token===generation)setStatus(error.message);}
+ finally{if(token===generation)setBusy(false);}
+});
+document.getElementById('reset').addEventListener('click',()=>{
+ generation++;cancelSolver();cancelChallenge();for(const tween of tweenGroup.getAll())tween.stop();tweenGroup.removeAll();
+ const oldGesture=gesture;gesture=null;if(oldGesture&&canvas.hasPointerCapture(oldGesture.id))canvas.releasePointerCapture(oldGesture.id);
+ if(active){for(const c of active.selected)scene.attach(c);scene.remove(active.pivot);active=null;}
+ for(const c of cubies){c.position.copy(c.userData.home);c.rotation.set(0,0,0);}
+ moveCount=0;setBusy(false);controls.enabled=true;controls.reset();controls.update();angleLabel.textContent='';canvas.style.cursor='grab';cleanGrid();updateReadout();setStatus('已重置 · 再来一次新的可能');
+});
+function resize(){if(gesture)releaseGesture(true);camera.aspect=innerWidth/innerHeight;camera.fov=innerWidth<700?46:36;camera.setViewOffset(innerWidth,innerHeight,0,innerWidth>=700?Math.max(0,Math.min(48,(860-innerHeight)*.32)):0,innerWidth,innerHeight);camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));}
+window.addEventListener('resize',resize);resize();
+renderer.setAnimationLoop(time=>{tweenGroup.update(time,false);if(challengePhase==='running')updateTimerReadout();controls.update();if(active||shadowDirty)renderContactShadow();renderer.render(scene,camera);});
+canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();window.showCubeError('图形上下文已中断，请刷新页面重新加载。');});
+window.cubeReady=true;clearTimeout(window.cubeLoadTimer);document.getElementById('loading').hidden=true;
+// 只读诊断入口：用于验证网格与视觉交互，不另建魔方逻辑状态。
+window.cubeDiagnostics=()=>({cubies:cubies.length,stickers:pickables.filter(m=>m.userData.color).length,active:active?{axis:active.axis,layer:active.layer,angle:active.angle,count:active.selected.length}:null,busy,challengePhase,challengeElapsed:challengePhase==='running'?performance.now()-challengeStart:challengeElapsed,bestChallengeTime,soundEnabled,solved:isSolved(),positions:cubies.map(c=>c.getWorldPosition(new THREE.Vector3()).toArray()),moves:moveCount});
+</script>
+</body></html>
+
