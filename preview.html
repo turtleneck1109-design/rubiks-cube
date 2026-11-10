@@ -147,6 +147,10 @@
       backdrop-filter: blur(12px);
       pointer-events: none;
     }
+
+    .version-link { display:inline-flex;align-items:center;padding:10px 16px;border:1px solid rgba(255,255,255,.22);border-radius:999px;color:#e4edce;text-decoration:none;font-size:13px;font-weight:700;background:rgba(9,12,20,.62);pointer-events:auto; }
+    .version-link:hover { background:rgba(95,131,255,.26); }
+    .version-link:focus-visible { outline:3px solid #e4edce;outline-offset:3px; }
   </style>
 </head>
 <body>
@@ -161,6 +165,7 @@
       </div>
     </div>
     <div class="buttons">
+      <a class="version-link" href="./cubic.html">体验 CUBIC 新版 · 智能复原 ↗</a>
       <button id="challengeBtn">Challenge</button>
       <button id="scrambleBtn">Scramble</button>
       <button id="resetBtn" class="secondary">Reset</button>
